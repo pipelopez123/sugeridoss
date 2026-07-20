@@ -1,0 +1,1780 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sugeridos · Electromillonaria — Avanzada</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#171A21; --ink-2:#4A5262; --ink-3:#7A8393;
+  --paper:#F6F5F1; --surface:#FFFFFF; --surface-2:#FBFAF7;
+  --line:#E6E3DA; --line-2:#D7D3C7;
+  --gold:#C9880A; --gold-2:#A96F06; --gold-soft:#FBEECF;
+  --red:#BC3A38; --red-soft:#FBE5E2;
+  --green:#1D8557; --green-soft:#E0F1E8;
+  --blue:#2F5DAA; --blue-soft:#E4ECF8;
+  --violet:#6A3FB2; --violet-soft:#ECE4F9;
+  --slate:#5C6472; --slate-soft:#ECEDEF;
+  --radius:10px; --radius-sm:7px;
+  --shadow:0 1px 2px rgba(20,24,33,.05), 0 8px 24px -12px rgba(20,24,33,.18);
+  --mono:'JetBrains Mono',ui-monospace,monospace;
+  --disp:'Space Grotesk',system-ui,sans-serif;
+  --body:'Inter',system-ui,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:var(--body);background:var(--paper);color:var(--ink);font-size:14px;line-height:1.45;-webkit-font-smoothing:antialiased}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+input,select{font-family:inherit;font-size:14px;color:var(--ink)}
+a{color:var(--gold-2)}
+.mono{font-family:var(--mono)}
+.tnum{font-variant-numeric:tabular-nums}
+::-webkit-scrollbar{height:10px;width:10px}
+::-webkit-scrollbar-thumb{background:var(--line-2);border-radius:6px}
+::-webkit-scrollbar-track{background:transparent}
+
+/* ---------- Top bar ---------- */
+.topbar{display:flex;align-items:center;gap:18px;padding:12px 22px;background:var(--ink);color:#fff;position:sticky;top:0;z-index:40}
+.brand{display:flex;align-items:center;gap:11px;font-family:var(--disp);font-weight:700;letter-spacing:-.02em;font-size:16px;white-space:nowrap}
+.brand .spark{width:26px;height:26px;border-radius:7px;background:linear-gradient(135deg,var(--gold),#F2B705);display:grid;place-items:center;color:#231a02;font-weight:700;box-shadow:0 0 0 1px rgba(255,255,255,.08) inset}
+.brand small{display:block;font-family:var(--body);font-weight:500;font-size:10px;letter-spacing:.14em;color:#B8BDC8;text-transform:uppercase;margin-top:-2px}
+.period-badge{font-family:var(--mono);font-size:12px;color:#DDE0E6;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);padding:5px 11px;border-radius:20px;white-space:nowrap}
+.period-badge b{color:#F2B705;font-weight:700}
+.topbar .grow{flex:1}
+.role-wrap{display:flex;align-items:center;gap:8px}
+.role-pill{display:flex;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:22px;padding:3px}
+.role-pill button{padding:5px 13px;border-radius:20px;font-size:12.5px;font-weight:600;color:#C7CBD4;transition:.15s}
+.role-pill button.on{background:var(--gold);color:#231a02}
+.userchip{font-size:12px;color:#DDE0E6;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);padding:5px 10px;border-radius:20px}
+
+/* ---------- Tabs ---------- */
+.tabs{display:flex;gap:2px;padding:0 18px;background:var(--surface);border-bottom:1px solid var(--line);position:sticky;top:50px;z-index:30;overflow-x:auto}
+.tabs button{padding:13px 15px 11px;font-weight:600;font-size:13.5px;color:var(--ink-3);border-bottom:2.5px solid transparent;white-space:nowrap;display:flex;align-items:center;gap:7px}
+.tabs button:hover{color:var(--ink-2)}
+.tabs button.on{color:var(--ink);border-color:var(--gold)}
+.tabs .count{font-size:11px;font-weight:700;background:var(--slate-soft);color:var(--ink-2);padding:1px 7px;border-radius:10px;min-width:20px;text-align:center}
+.tabs button.on .count{background:var(--gold-soft);color:var(--gold-2)}
+.tabs .count.hot{background:var(--red-soft);color:var(--red)}
+.tabs button[data-admin]{margin-left:auto}
+
+/* ---------- Layout ---------- */
+.wrap{max-width:1600px;margin:0 auto;padding:20px 22px 60px}
+.controlbar{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-bottom:16px}
+.field{display:flex;flex-direction:column;gap:4px}
+.field label{font-size:10.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+.ctrl{background:var(--surface);border:1px solid var(--line-2);border-radius:var(--radius-sm);padding:8px 11px;font-size:13.5px;min-height:38px;transition:.15s}
+.ctrl:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-soft)}
+select.ctrl{min-width:180px;cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2 4l4 4 4-4' stroke='%237A8393' stroke-width='1.6' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:28px}
+.search{position:relative;flex:1;min-width:200px}
+.search input{width:100%;padding-left:34px}
+.search svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);pointer-events:none}
+.grow{flex:1}
+.btn{background:var(--ink);color:#fff;border-radius:var(--radius-sm);padding:9px 16px;font-weight:600;font-size:13.5px;display:inline-flex;align-items:center;gap:8px;transition:.15s;min-height:38px}
+.btn:hover{background:#000}
+.btn.gold{background:var(--gold);color:#231a02}
+.btn.gold:hover{background:var(--gold-2);color:#fff}
+.btn.ghost{background:var(--surface);color:var(--ink);border:1px solid var(--line-2)}
+.btn.ghost:hover{border-color:var(--ink-3);background:var(--surface-2)}
+.btn.sm{padding:6px 11px;font-size:12.5px;min-height:32px}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.seg{display:flex;background:var(--surface);border:1px solid var(--line-2);border-radius:var(--radius-sm);padding:3px;gap:2px;min-height:38px;align-items:center}
+.seg button{padding:6px 13px;border-radius:6px;font-size:13px;font-weight:600;color:var(--ink-3);transition:.15s;white-space:nowrap}
+.seg button:hover{color:var(--ink-2)}
+.seg button.on{background:var(--gold);color:#231a02}
+.seg-days{width:64px;text-align:center;border:1px solid var(--line-2);border-radius:6px;padding:5px;font-family:var(--mono);font-size:13px;margin-left:2px}
+
+/* Centros dashboard */
+.cc-toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:14px}
+.cc-list{display:flex;flex-direction:column}
+.cc-row{display:grid;grid-template-columns:minmax(150px,220px) 1fr minmax(150px,190px) auto;gap:14px;align-items:center;padding:11px 16px;border-bottom:1px solid var(--line);cursor:pointer;transition:.12s}
+.cc-row:hover{background:var(--surface-2)}
+.cc-id{min-width:0}
+.cc-id b{font-weight:600;font-size:13.5px;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cc-id .code{font-size:11px}
+.cc-bar-wrap{height:26px;background:var(--surface-2);border-radius:6px;overflow:hidden;position:relative;border:1px solid var(--line)}
+.cc-bar{height:100%;border-radius:6px;display:flex;align-items:center;justify-content:flex-end;padding-right:8px;min-width:2px;transition:width .5s cubic-bezier(.2,.8,.2,1)}
+.cc-bar span{font-family:var(--disp);font-weight:700;font-size:11.5px;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.25);white-space:nowrap}
+.cc-metrics{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.cc-metrics .mtag{font-size:11px;font-weight:600;padding:2px 8px;border-radius:12px;white-space:nowrap}
+.cc-metrics .m-q{background:var(--red-soft);color:var(--red)}
+.cc-metrics .m-b{background:var(--gold-soft);color:var(--gold-2)}
+.cc-metrics .m-s{background:var(--blue-soft);color:var(--blue)}
+.cc-metrics .m-u{background:var(--slate-soft);color:var(--ink-2);font-family:var(--mono)}
+.cc-go{color:var(--ink-3);font-size:18px}
+.cc-head-row{display:grid;grid-template-columns:minmax(150px,220px) 1fr minmax(150px,190px) auto;gap:14px;padding:9px 16px;font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-3);border-bottom:1px solid var(--line-2)}
+@media(max-width:760px){.cc-row,.cc-head-row{grid-template-columns:1fr auto}.cc-bar-wrap,.cc-head-row span:nth-child(2),.cc-head-row span:nth-child(3){display:none}}
+
+/* ---------- KPI header ---------- */
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:18px}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px;position:relative;overflow:hidden}
+.kpi .lab{font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-3);display:flex;align-items:center;gap:6px}
+.kpi .val{font-family:var(--disp);font-weight:700;font-size:26px;letter-spacing:-.02em;margin-top:6px;line-height:1}
+.kpi .sub{font-size:11.5px;color:var(--ink-3);margin-top:4px}
+.kpi .dot{width:8px;height:8px;border-radius:50%}
+.kpi.k-red .val{color:var(--red)} .kpi.k-red .dot{background:var(--red)}
+.kpi.k-gold .val{color:var(--gold-2)} .kpi.k-gold .dot{background:var(--gold)}
+.kpi.k-green .val{color:var(--green)} .kpi.k-green .dot{background:var(--green)}
+.kpi.k-blue .val{color:var(--blue)} .kpi.k-blue .dot{background:var(--blue)}
+.kpi.k-violet .val{color:var(--violet)} .kpi.k-violet .dot{background:var(--violet)}
+
+/* ---------- Cards / tables ---------- */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;margin-bottom:18px}
+.card-head{display:flex;align-items:center;gap:12px;padding:13px 16px;border-bottom:1px solid var(--line);background:var(--surface-2)}
+.card-head h2{font-family:var(--disp);font-size:14.5px;font-weight:600;letter-spacing:-.01em}
+.card-head .desc{font-size:12px;color:var(--ink-3)}
+.tablescroll{overflow:auto;max-height:66vh}
+table{width:100%;border-collapse:collapse;font-size:13px}
+thead th{position:sticky;top:0;background:var(--surface);z-index:2;text-align:left;font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-3);padding:10px 12px;border-bottom:1px solid var(--line-2);white-space:nowrap;cursor:pointer;user-select:none}
+thead th.no-sort{cursor:default}
+thead th .arr{opacity:.35;font-size:9px;margin-left:3px}
+thead th.sorted .arr{opacity:1;color:var(--gold-2)}
+tbody td{padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:middle}
+tbody tr:hover{background:var(--surface-2)}
+td.num{text-align:right;font-variant-numeric:tabular-nums}
+.code{font-family:var(--mono);font-size:11.5px;color:var(--ink-2)}
+.nombre{font-weight:500;max-width:360px}
+.nombre small{display:block;color:var(--ink-3);font-size:11px;font-weight:400}
+.tag{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px;white-space:nowrap}
+.tag::before{content:'';width:6px;height:6px;border-radius:50%;background:currentColor;opacity:.9}
+.t-quiebre{background:var(--red-soft);color:var(--red)}
+.t-bajo{background:var(--gold-soft);color:var(--gold-2)}
+.t-ok{background:var(--green-soft);color:var(--green)}
+.t-sobre{background:var(--blue-soft);color:var(--blue)}
+.t-inactivo{background:var(--slate-soft);color:var(--slate)}
+.t-nuevo{background:var(--violet-soft);color:var(--violet)}
+.sug-val{font-family:var(--disp);font-weight:700;font-size:15px}
+.sug-val.pos{color:var(--gold-2)}
+.abc{display:inline-block;font-size:10px;font-weight:700;width:16px;height:16px;line-height:16px;text-align:center;border-radius:4px;vertical-align:middle}
+.abc-A{background:var(--green-soft);color:var(--green)}
+.abc-B{background:var(--gold-soft);color:var(--gold-2)}
+.abc-C{background:var(--slate-soft);color:var(--slate)}
+.pill-count{font-size:11px;font-weight:700;color:var(--ink-2);background:var(--slate-soft);padding:2px 9px;border-radius:12px}
+
+/* ---------- Empty / upload ---------- */
+.empty{text-align:center;padding:60px 20px;max-width:560px;margin:40px auto}
+.empty .ico{width:64px;height:64px;border-radius:16px;background:var(--gold-soft);display:grid;place-items:center;margin:0 auto 18px}
+.empty h2{font-family:var(--disp);font-size:22px;letter-spacing:-.02em;margin-bottom:8px}
+.empty p{color:var(--ink-2);margin-bottom:22px}
+.dropzone{border:2px dashed var(--line-2);border-radius:14px;padding:34px;background:var(--surface);transition:.18s;cursor:pointer}
+.dropzone:hover,.dropzone.drag{border-color:var(--gold);background:var(--gold-soft)}
+.dropzone .big{font-weight:600;font-size:15px;margin-bottom:4px}
+.dropzone .sm{font-size:12.5px;color:var(--ink-3)}
+
+/* ---------- Alerts groups ---------- */
+.alert-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px}
+.alert-block{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+.alert-block .ah{display:flex;align-items:center;gap:9px;padding:12px 15px;border-bottom:1px solid var(--line)}
+.alert-block .ah .ic{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;flex-shrink:0}
+.alert-block .ah h3{font-size:13.5px;font-weight:600}
+.alert-block .ah .n{margin-left:auto;font-family:var(--disp);font-weight:700;font-size:17px}
+.alert-list{max-height:300px;overflow:auto}
+.alert-item{display:flex;align-items:center;gap:10px;padding:9px 15px;border-bottom:1px solid var(--line);font-size:12.5px}
+.alert-item:last-child{border-bottom:none}
+.alert-item .ti{flex:1;min-width:0}
+.alert-item .ti b{font-weight:600;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.alert-item .ti span{color:var(--ink-3);font-size:11px}
+.alert-item .rt{font-family:var(--mono);font-size:11px;color:var(--ink-2);white-space:nowrap}
+.alert-empty{padding:24px 15px;text-align:center;color:var(--ink-3);font-size:12.5px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;padding:12px 15px}
+.chip{font-size:12px;font-family:var(--mono);padding:4px 10px;border-radius:20px;font-weight:500}
+.chip.new{background:var(--violet-soft);color:var(--violet)}
+.chip.closed{background:var(--red-soft);color:var(--red);text-decoration:line-through}
+
+/* ---------- Config ---------- */
+.cfg-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media(max-width:900px){.cfg-grid{grid-template-columns:1fr}}
+.cfg-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 0;border-bottom:1px solid var(--line)}
+.cfg-row:last-child{border-bottom:none}
+.cfg-row .lbl b{font-weight:600;display:block;font-size:13.5px}
+.cfg-row .lbl span{font-size:11.5px;color:var(--ink-3)}
+.cfg-row input{width:90px;text-align:right}
+.band-row{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:10px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line)}
+.band-row .bn{display:flex;align-items:center;gap:8px;font-weight:600;font-size:13px}
+.band-row input{width:100%;text-align:right}
+.userlist{display:flex;flex-direction:column;gap:8px}
+.userrow{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--surface-2);border:1px solid var(--line);border-radius:var(--radius-sm)}
+.userrow .un{font-weight:600;min-width:110px}
+.userrow .uc{flex:1;font-size:11.5px;color:var(--ink-2);font-family:var(--mono)}
+.userrow .uc.none{color:var(--ink-3);font-style:italic;font-family:var(--body)}
+.mini{font-size:11px;color:var(--ink-3)}
+
+/* ---------- Modal ---------- */
+.modal-bg{position:fixed;inset:0;background:rgba(20,24,33,.5);display:none;align-items:center;justify-content:center;z-index:100;padding:20px}
+.modal-bg.on{display:flex}
+.modal{background:var(--surface);border-radius:14px;box-shadow:0 20px 60px -15px rgba(0,0,0,.4);width:100%;max-width:560px;max-height:88vh;overflow:auto}
+.modal.wide{max-width:820px}
+.modal-head{display:flex;align-items:center;gap:10px;padding:16px 20px;border-bottom:1px solid var(--line)}
+.modal-head h3{font-family:var(--disp);font-size:16px;flex:1}
+.modal-body{padding:20px}
+.modal-foot{display:flex;justify-content:flex-end;gap:10px;padding:14px 20px;border-top:1px solid var(--line);background:var(--surface-2)}
+.close-x{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;color:var(--ink-3)}
+.close-x:hover{background:var(--slate-soft);color:var(--ink)}
+.pininput{font-family:var(--mono);font-size:22px;letter-spacing:8px;text-align:center;width:100%;padding:14px}
+.subst-head{display:flex;gap:10px;align-items:flex-start;padding:12px 14px;background:var(--red-soft);border-radius:var(--radius-sm);margin-bottom:14px}
+.subst-item{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--line)}
+.subst-item .best{margin-left:auto;text-align:right}
+.subst-item.cheapest{background:var(--green-soft);margin:0 -12px;padding-left:12px;padding-right:12px;border-radius:6px}
+
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--ink);color:#fff;padding:12px 20px;border-radius:24px;font-size:13.5px;font-weight:500;box-shadow:0 10px 30px -8px rgba(0,0,0,.4);z-index:200;opacity:0;transition:.28s;display:flex;align-items:center;gap:10px}
+.toast.on{transform:translateX(-50%) translateY(0);opacity:1}
+.toast.err{background:var(--red)}
+.toast.ok{background:var(--green)}
+
+.notice{display:flex;gap:11px;padding:13px 16px;border-radius:var(--radius);margin-bottom:16px;font-size:13px;align-items:flex-start}
+.notice.warn{background:var(--gold-soft);color:#5f4405;border:1px solid #eecf8f}
+.notice.info{background:var(--blue-soft);color:#1e3a66;border:1px solid #b9cdec}
+.notice b{font-weight:700}
+.hidden{display:none!important}
+.spin{width:16px;height:16px;border:2.5px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:sp .7s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.footer-note{text-align:center;color:var(--ink-3);font-size:11.5px;margin-top:30px;line-height:1.7}
+
+@media(max-width:720px){
+  .wrap{padding:14px}
+  .kpi .val{font-size:22px}
+  .brand small{display:none}
+  .period-badge{display:none}
+  .nombre{max-width:200px}
+}
+@media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">
+    <span class="spark">⚡</span>
+    <div>SUGERIDOS<small>Electromillonaria · JLC</small></div>
+  </div>
+  <div class="period-badge" id="periodBadge">Sin informe cargado</div>
+  <div class="grow"></div>
+  <div class="role-wrap">
+    <span class="userchip hidden" id="userChip"></span>
+    <div class="role-pill">
+      <button id="roleAdmin" class="on" onclick="setRole('admin')">Administrador</button>
+      <button id="roleComprador" onclick="setRole('comprador')">Comprador</button>
+      <button id="roleUser" onclick="setRole('cc')">Centro pequeño</button>
+    </div>
+  </div>
+</div>
+
+<nav class="tabs" id="tabs">
+  <button class="on" data-tab="sugeridos" onclick="go('sugeridos')">Sugeridos</button>
+  <button data-tab="centros" onclick="go('centros')">Centros de costo</button>
+  <button data-tab="alertas" onclick="go('alertas')">Alertas <span class="count" id="cAlert">0</span></button>
+  <button data-tab="sustitutos" onclick="go('sustitutos')">Similares & Sustitutos</button>
+  <button data-tab="traslados" onclick="go('traslados')">Traslados <span class="count" id="cTrasl">0</span></button>
+  <button data-tab="cargar" onclick="go('cargar')">Cargar informe</button>
+  <button data-tab="config" data-admin onclick="go('config')">⚙ Configuración</button>
+</nav>
+
+<div class="wrap">
+
+  <!-- EMPTY STATE -->
+  <div id="emptyState" class="empty">
+    <div class="ico"><svg width="30" height="30" viewBox="0 0 24 24" fill="none"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2" stroke="#C9880A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <h2>Sube tu primer informe de rotación</h2>
+    <p>Carga el Excel <b>Rotación &amp; Saldos por Bodega</b> exportado del ERP. La herramienta calcula automáticamente los sugeridos de compra por centro de costo comparando <b>Rotación (RT)</b> contra <b>Saldo (SD)</b>.</p>
+    <div class="dropzone" id="dz0" onclick="fileInput.click()">
+      <div class="big">Arrastra el archivo aquí o haz clic para seleccionar</div>
+      <div class="sm">Formato .XLSX del ERP Manager · procesado localmente en tu navegador</div>
+    </div>
+  </div>
+
+  <!-- APP CONTENT (hidden until data) -->
+  <div id="app" class="hidden">
+
+    <!-- ===== SUGERIDOS ===== -->
+    <section data-view="sugeridos">
+      <div class="controlbar">
+        <div class="field">
+          <label>Centro de costo</label>
+          <select class="ctrl" id="ccSelect" onchange="renderSugeridos()"></select>
+        </div>
+        <div class="field">
+          <label>Horizonte del sugerido</label>
+          <div class="seg" id="horizonteSeg">
+            <button data-h="semanal" onclick="setHorizonte('semanal')">Semanal</button>
+            <button data-h="mensual" onclick="setHorizonte('mensual')">Mensual</button>
+            <button data-h="custom" onclick="setHorizonte('custom')">Días…</button>
+            <input class="seg-days hidden" id="horizonteDaysInput" type="number" min="1" max="365" onchange="setHorizonteDias(this.value)" title="Días de cobertura">
+          </div>
+        </div>
+        <div class="field">
+          <label>Estado</label>
+          <select class="ctrl" id="estadoFilter" onchange="renderSugeridos()">
+            <option value="sugerir">Solo con sugerido &gt; 0</option>
+            <option value="all">Todos</option>
+            <option value="QUIEBRE">Quiebre</option>
+            <option value="BAJO">Bajo</option>
+            <option value="SOBRESTOCK">Sobrestock</option>
+            <option value="INACTIVO">Inactivo (sin rotación)</option>
+          </select>
+        </div>
+        <div class="field grow search">
+          <label>Buscar</label>
+          <span class="search-i"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" style="position:absolute;left:11px;top:32px"><circle cx="11" cy="11" r="7" stroke="#7A8393" stroke-width="2"/><path d="M20 20l-3-3" stroke="#7A8393" stroke-width="2" stroke-linecap="round"/></svg></span>
+          <input class="ctrl" id="sugSearch" style="padding-left:34px" placeholder="Nombre, código, marca o referencia…" oninput="renderSugeridos()">
+        </div>
+        <div class="field"><label>&nbsp;</label>
+          <div style="display:flex;gap:8px">
+            <button class="btn gold" onclick="exportSemanal()" title="Excel para el usuario del centro: sugerido de la semana + sustitutos + productos ingresados">↓ Plantilla semanal</button>
+            <button class="btn ghost" onclick="exportOCporMarca()" title="Orden de compra consolidada por marca (suma de centros visibles)">↓ OC x marca</button>
+            <button class="btn ghost" onclick="exportSugeridos()" title="Exportar la tabla completa de sugeridos">↓ Tabla</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="kpis" id="sugKpis"></div>
+      <div class="card">
+        <div class="card-head">
+          <h2 id="sugTitle">Sugeridos</h2>
+          <span class="pill-count" id="sugCount">0 ítems</span>
+          <div class="grow"></div>
+          <span class="desc" id="sugDesc"></span>
+        </div>
+        <div class="tablescroll">
+          <table id="sugTable">
+            <thead><tr>
+              <th class="no-sort">Estado</th>
+              <th data-k="nombre">Producto <span class="arr">▼</span></th>
+              <th data-k="marca">Marca <span class="arr">▼</span></th>
+              <th data-k="rt" class="num sorted">RT <span class="arr">▼</span></th>
+              <th data-k="sd" class="num">SD <span class="arr">▼</span></th>
+              <th data-k="objetivo" class="num">Objetivo <span class="arr">▼</span></th>
+              <th data-k="sugerido" class="num">Sugerido <span class="arr">▼</span></th>
+              <th data-k="valor" class="num">Valor sug. <span class="arr">▼</span></th>
+              <th class="no-sort"></th>
+            </tr></thead>
+            <tbody id="sugBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== CENTROS ===== -->
+    <section data-view="centros" class="hidden">
+      <div class="cc-toolbar">
+        <div class="field grow search" style="min-width:220px">
+          <label>Buscar centro por código o nombre</label>
+          <input class="ctrl" id="ccSearch" style="width:100%" placeholder="Ej: CALI, 10301, BODDAZA…" oninput="renderCentros()">
+        </div>
+        <div class="field">
+          <label>Tipo de centro</label>
+          <select class="ctrl" id="ccTipo" onchange="renderCentros()">
+            <option value="todos">Todos</option>
+            <option value="bodega">Solo bodegas (compradores)</option>
+            <option value="pequeno">Solo centros pequeños</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Ordenar por</label>
+          <select class="ctrl" id="ccOrder" onchange="renderCentros()">
+            <option value="valor">Valor a sugerir</option>
+            <option value="quiebres">Quiebres</option>
+            <option value="unidades">Unidades sugeridas</option>
+            <option value="sobrestock">Sobrestock</option>
+            <option value="nombre">Nombre (A–Z)</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Horizonte</label>
+          <div class="seg" id="horizonteSeg2">
+            <button data-h="semanal" onclick="setHorizonte('semanal')">Semanal</button>
+            <button data-h="mensual" onclick="setHorizonte('mensual')">Mensual</button>
+          </div>
+        </div>
+      </div>
+      <div class="kpis" id="ccKpis"></div>
+      <div class="card">
+        <div class="card-head"><h2 id="ccTitle">Centros de costo</h2><span class="pill-count" id="ccCount">0</span>
+          <div class="grow"></div><span class="desc" id="ccDesc"></span></div>
+        <div class="cc-head-row"><span>Centro de costo</span><span>Valor a sugerir</span><span style="text-align:right">Indicadores</span><span></span></div>
+        <div class="tablescroll" style="max-height:70vh"><div class="cc-list" id="ccList"></div></div>
+      </div>
+    </section>
+
+    <!-- ===== ALERTAS ===== -->
+    <section data-view="alertas" class="hidden">
+      <div id="alertNotices"></div>
+      <div class="alert-grid" id="alertGrid"></div>
+    </section>
+
+    <!-- ===== SUSTITUTOS ===== -->
+    <section data-view="sustitutos" class="hidden">
+      <div class="notice info"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#2F5DAA" stroke-width="2"/><path d="M12 8v.01M12 11v5" stroke="#2F5DAA" stroke-width="2" stroke-linecap="round"/></svg><div>Para cada producto en <b>quiebre</b> (con demanda pero sin saldo), aquí ves referencias <b>similares por descripción</b> que sí tienen inventario, resaltando la de <b>menor costo</b> como alternativa a ofrecer o para traslado.</div></div>
+      <div class="controlbar">
+        <div class="field grow search">
+          <label>Buscar producto en quiebre</label>
+          <input class="ctrl" id="substSearch" placeholder="Filtrar por nombre o línea…" oninput="renderSustitutos()">
+        </div>
+        <div class="field">
+          <label>Centro de costo</label>
+          <select class="ctrl" id="substCC" onchange="renderSustitutos()"></select>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h2>Quiebres con alternativa disponible</h2><span class="pill-count" id="substCount">0</span></div>
+        <div class="tablescroll">
+          <table>
+            <thead><tr>
+              <th class="no-sort">Producto en quiebre</th><th class="no-sort">Línea / Marca</th>
+              <th class="num no-sort">Demanda (RT)</th><th class="no-sort">Mejor alternativa (menor costo con stock)</th><th class="no-sort"></th>
+            </tr></thead>
+            <tbody id="substBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== TRASLADOS ===== -->
+    <section data-view="traslados" class="hidden">
+      <div class="notice info"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M7 8h11l-3-3M17 16H6l3 3" stroke="#2F5DAA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><div>Antes de comprar: el mismo producto en <b>quiebre</b> en un centro puede tener <b>excedente</b> en otro. Aquí se sugiere mover unidades entre bodegas para cubrir la demanda sin generar compra nueva.</div></div>
+      <div class="controlbar">
+        <div class="field">
+          <label>Centro destino (recibe)</label>
+          <select class="ctrl" id="traslDest" onchange="renderTraslados()"></select>
+        </div>
+        <div class="field grow search">
+          <label>Buscar</label>
+          <input class="ctrl" id="traslSearch" placeholder="Producto o marca…" oninput="renderTraslados()">
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h2>Traslados sugeridos</h2><span class="pill-count" id="traslCount">0</span>
+          <div class="grow"></div><button class="btn gold sm" onclick="exportTraslados()">↓ Exportar Excel</button></div>
+        <div class="tablescroll">
+          <table>
+            <thead><tr>
+              <th class="no-sort">Producto</th><th class="no-sort">Origen (excedente)</th>
+              <th class="num no-sort">Disp.</th><th class="no-sort">→ Destino (falta)</th>
+              <th class="num no-sort">Demanda</th><th class="num no-sort">Trasladar</th>
+            </tr></thead>
+            <tbody id="traslBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== CARGAR ===== -->
+    <section data-view="cargar" class="hidden">
+      <div class="card">
+        <div class="card-head"><h2>Cargar nuevo informe de rotación</h2></div>
+        <div style="padding:20px">
+          <div class="dropzone" id="dz1" onclick="fileInput.click()">
+            <div class="big">Arrastra el .XLSX aquí o haz clic para seleccionar</div>
+            <div class="sm">Cada carga se compara con el informe anterior para detectar centros y productos nuevos o cerrados.</div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h2>Historial de demanda (varios informes)</h2><span class="pill-count" id="histIngCount">0 periodos</span></div>
+        <div style="padding:20px">
+          <p class="mini" style="margin-bottom:12px">Sube <b>varios informes a la vez</b> (varios meses/semanas). La herramienta calcula la demanda promedio y su variabilidad por producto y centro para dimensionar el <b>stock de seguridad</b>. Actívalo en Configuración → "Usar historial". El último informe cargado queda como el actual.</p>
+          <div class="dropzone" id="dzHist" onclick="histInput.click()">
+            <div class="big">Arrastra varios .XLSX o haz clic para seleccionar</div>
+            <div class="sm">Se procesan en orden; el más reciente será el informe activo.</div>
+          </div>
+          <div id="histIngList" class="mini" style="margin-top:10px"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h2>Historial de informes</h2><span class="pill-count" id="histCount">0</span>
+          <div class="grow"></div><button class="btn ghost sm" onclick="clearAll()">Borrar todos los datos</button></div>
+        <div class="tablescroll" style="max-height:none">
+          <table>
+            <thead><tr><th class="no-sort">Periodo</th><th class="no-sort">Cargado</th><th class="num no-sort">Centros</th><th class="num no-sort">Productos</th><th class="num no-sort">Quiebres</th><th class="num no-sort">Valor sugerido</th></tr></thead>
+            <tbody id="histBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== CONFIG ===== -->
+    <section data-view="config" class="hidden">
+      <div class="cfg-grid">
+        <div class="card">
+          <div class="card-head"><h2>Estándares de sugerido</h2></div>
+          <div style="padding:6px 18px 16px">
+            <div class="cfg-row" style="border-bottom:2px solid var(--line-2)">
+              <div class="lbl"><b>Usar historial + stock de seguridad</b><span>Requiere cargar varios informes. Dimensiona con demanda promedio y su variabilidad.</span></div>
+              <div style="display:flex;gap:8px;align-items:center">
+                <select class="ctrl" id="cfgUsarHist" onchange="cfgHistChange()" style="width:90px"><option value="no">No</option><option value="si">Sí</option></select>
+                <input class="ctrl tnum" id="cfgNivelServicio" type="number" min="50" max="99" style="width:70px" onchange="cfgHistChange()" title="Nivel de servicio %">
+                <span class="mini">% serv.</span>
+              </div>
+            </div>
+            <div class="cfg-row" style="border-bottom:2px solid var(--line-2)">
+              <div class="lbl"><b>Horizonte del sugerido</b><span>Semanal, mensual o días personalizados. Normaliza la rotación del informe al horizonte elegido.</span></div>
+              <div style="display:flex;gap:8px;align-items:center">
+                <select class="ctrl" id="cfgHorizonteTipo" onchange="cfgHorizonteChange()" style="width:110px"><option value="semanal">Semanal</option><option value="mensual">Mensual</option><option value="custom">Días…</option></select>
+                <input class="ctrl tnum" id="cfgHorizonteDias" type="number" min="1" max="365" style="width:70px" onchange="cfgHorizonteChange()">
+              </div>
+            </div>
+            <p class="mini" style="margin:10px 0 6px">Clasificación por rotación proyectada al horizonte. Cada banda define cuánta cobertura mantener como objetivo de stock (factor de seguridad).</p>
+            <div class="band-row" style="border-bottom:2px solid var(--line-2);font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-3);font-weight:700">
+              <div>Banda</div><div style="text-align:right">RT hasta</div><div style="text-align:right">Factor cobertura</div>
+            </div>
+            <div class="band-row">
+              <div class="bn"><span class="tag t-inactivo" style="pointer-events:none">Baja</span></div>
+              <input class="ctrl tnum" id="cfgUmbralBaja" type="number" min="0" step="1">
+              <input class="ctrl tnum" id="cfgFactorBaja" type="number" min="0" step="0.1">
+            </div>
+            <div class="band-row">
+              <div class="bn"><span class="tag t-bajo" style="pointer-events:none">Media</span></div>
+              <input class="ctrl tnum" id="cfgUmbralMedia" type="number" min="0" step="1">
+              <input class="ctrl tnum" id="cfgFactorMedia" type="number" min="0" step="0.1">
+            </div>
+            <div class="band-row" style="border-bottom:none">
+              <div class="bn"><span class="tag t-ok" style="pointer-events:none">Alta</span></div>
+              <input class="ctrl" value="∞" disabled style="text-align:right;background:var(--surface-2)">
+              <input class="ctrl tnum" id="cfgFactorAlta" type="number" min="0" step="0.1">
+            </div>
+
+            <div class="cfg-row" style="margin-top:14px">
+              <div class="lbl"><b>Rotación mínima para sugerir</b><span>Ignora ítems con RT por debajo de este valor</span></div>
+              <input class="ctrl tnum" id="cfgRotMin" type="number" min="0" step="1">
+            </div>
+            <div class="cfg-row">
+              <div class="lbl"><b>Umbral de sobrestock</b><span>Marca sobrestock si SD &gt; objetivo × este factor</span></div>
+              <input class="ctrl tnum" id="cfgSobre" type="number" min="1" step="0.5">
+            </div>
+            <div class="cfg-row">
+              <div class="lbl"><b>Redondeo del objetivo</b><span>Cómo redondear RT × factor</span></div>
+              <select class="ctrl" id="cfgRedondeo" style="width:120px"><option value="ceil">Hacia arriba</option><option value="round">Al más cercano</option><option value="floor">Hacia abajo</option></select>
+            </div>
+            <div style="display:flex;gap:10px;margin-top:16px">
+              <button class="btn gold" onclick="saveStandards()">Guardar estándares</button>
+              <button class="btn ghost" onclick="resetStandards()">Restaurar por defecto</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><h2>Usuarios y asignaciones</h2></div>
+          <div style="padding:16px 18px">
+            <p class="mini" style="margin-bottom:12px">Hay dos tipos de usuario. Los <b>compradores</b> se miden por <b>bodegas</b> (matriz). Los usuarios de <b>centro pequeño</b> ven solo sus centros asignados, y las bodegas quedan excluidas automáticamente. El administrador ve todo.</p>
+            <div class="userlist" id="userList"></div>
+            <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap">
+              <input class="ctrl" id="newUserName" placeholder="Nombre del usuario" style="flex:1;min-width:130px">
+              <select class="ctrl" id="newUserTipo" style="width:150px"><option value="cc">Centro pequeño</option><option value="comprador">Comprador</option></select>
+              <button class="btn" onclick="addUser()">+ Agregar</button>
+            </div>
+          </div>
+          <div class="card-head" style="border-top:1px solid var(--line)"><h2>Matriz de bodegas</h2><span class="pill-count" id="matrizCount">0</span></div>
+          <div style="padding:16px 18px">
+            <p class="mini" style="margin-bottom:12px">Estas son las <b>bodegas</b> gestionadas por compradores. Se excluyen del sugerido de los centros pequeños. Al detectar un centro nuevo, márcalo aquí como bodega si corresponde (se cruza por <b>código</b>).</p>
+            <div class="userlist" id="matrizList"></div>
+            <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap">
+              <input class="ctrl mono" id="newBodCode" placeholder="Código" style="width:110px">
+              <input class="ctrl" id="newBodName" placeholder="Nombre de la bodega" style="flex:1;min-width:150px">
+              <button class="btn" onclick="addBodega()">+ Bodega</button>
+            </div>
+            <div id="bodegasSinClasificar" style="margin-top:14px"></div>
+          </div>
+          <div class="card-head" style="border-top:1px solid var(--line)"><h2>Seguridad</h2></div>
+          <div style="padding:16px 18px">
+            <div class="cfg-row" style="border:none">
+              <div class="lbl"><b>PIN de administrador</b><span>Requerido para entrar al modo Administrador</span></div>
+              <div style="display:flex;gap:8px">
+                <input class="ctrl mono" id="cfgPin" style="width:100px;text-align:center" maxlength="8">
+                <button class="btn sm" onclick="savePin()">Guardar</button>
+              </div>
+            </div>
+            <p class="mini" style="margin-top:8px">Nota: al ser una herramienta local sin servidor, este control es una separación de vistas, no seguridad de nivel empresarial. Para control de acceso real, se integra con el login de tu servidor.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div><!-- /app -->
+
+  <div class="footer-note" id="footerNote"></div>
+</div>
+
+<input type="file" id="fileInput" accept=".xlsx,.xls,.XLSX" class="hidden">
+<input type="file" id="histInput" accept=".xlsx,.xls,.XLSX" multiple class="hidden">
+
+<!-- Modals -->
+<div class="modal-bg" id="pinModal">
+  <div class="modal" style="max-width:380px">
+    <div class="modal-head"><h3>Acceso administrador</h3><button class="close-x" onclick="closeModal('pinModal')">✕</button></div>
+    <div class="modal-body">
+      <p class="mini" style="margin-bottom:12px">Ingresa el PIN de administrador para ver todos los centros y la configuración.</p>
+      <input class="ctrl pininput" id="pinEntry" type="password" inputmode="numeric" placeholder="••••" onkeydown="if(event.key==='Enter')tryPin()">
+      <div id="pinErr" class="mini" style="color:var(--red);margin-top:8px;height:16px"></div>
+    </div>
+    <div class="modal-foot"><button class="btn ghost" onclick="closeModal('pinModal')">Cancelar</button><button class="btn gold" onclick="tryPin()">Entrar</button></div>
+  </div>
+</div>
+
+<div class="modal-bg" id="userModal">
+  <div class="modal wide">
+    <div class="modal-head"><h3 id="userModalTitle">Asignar centros</h3><button class="close-x" onclick="closeModal('userModal')">✕</button></div>
+    <div class="modal-body" id="userModalBody"></div>
+    <div class="modal-foot"><button class="btn ghost" onclick="closeModal('userModal')">Cerrar</button><button class="btn gold" onclick="saveUserCenters()">Guardar asignación</button></div>
+  </div>
+</div>
+
+<div class="modal-bg" id="substModal">
+  <div class="modal">
+    <div class="modal-head"><h3>Referencias similares</h3><button class="close-x" onclick="closeModal('substModal')">✕</button></div>
+    <div class="modal-body" id="substModalBody"></div>
+    <div class="modal-foot"><button class="btn ghost" onclick="closeModal('substModal')">Cerrar</button></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============================================================
+   ESTADO GLOBAL
+============================================================ */
+const LS = {cfg:'jlc_sug_config', hist:'jlc_sug_history', cur:'jlc_sug_current'};
+const META = {codigo:0,nombre:1,unimed:2,marca:3,linea:4,lapso:5,fecha:6,cantidad:7,costo:8,ultValor:9,edad:10,refe:11,nprecio:12};
+const MATRIZ_DEFAULT = [
+  {code:'10150',name:'BODEGA BUCHELLI'},{code:'10531',name:'BODEGA MOCOA'},{code:'107AD',name:'BODEGA HUILA'},
+  {code:'101AK',name:'BODEGA DAZA'},{code:'10401',name:'BODEGA POPAYAN'},{code:'101CE',name:'TECNOLOGIA MOVIL'},
+  {code:'152R1',name:'BODEGA DE REPUESTOS FRATELLI'},{code:'360Z2',name:'BODEGA ZONA FRANCA'},{code:'360Z3',name:'BODEGA ZONA DEL PACIFICO'},
+  {code:'10301',name:'BODEGA PRINCIPAL VALLE'},{code:'10303',name:'BODEGA VALLE SEDE 2'},{code:'10304',name:'BODEGA PRINCIPAL PALMIRA'}
+];
+const DEFAULT_CFG = {
+  adminPin:'1234',
+  std:{umbralBaja:3, umbralMedia:15, factorBaja:0.5, factorMedia:1.0, factorAlta:1.5, rotMin:1, sobrestock:3, redondeo:'ceil', horizonteTipo:'mensual', horizonteDias:30, usarHistorico:false, nivelServicio:90},
+  users:[],                 // {nombre, tipo:'comprador'|'cc', centros:[...]}
+  matrizBodegas: structuredClone(MATRIZ_DEFAULT)
+};
+let cfg = loadCfg();
+let dataset = null;            // informe actual parseado
+let prevSnapshot = null;       // snapshot anterior (para comparaciones)
+let diffCenters = {nuevos:[], cerrados:[]};
+let newProducts = [];          // códigos nuevos vs anterior
+let role = 'admin';            // 'admin' | 'comprador' | 'cc'
+let currentUser = null;
+let sugSort = {k:'rt', dir:-1};
+
+/* ============================================================
+   PERSISTENCIA
+============================================================ */
+function loadCfg(){ try{const c=JSON.parse(localStorage.getItem(LS.cfg)); if(!c) return structuredClone(DEFAULT_CFG); const m={...DEFAULT_CFG,...c, std:{...DEFAULT_CFG.std,...(c.std||{})}}; if(!m.matrizBodegas) m.matrizBodegas=structuredClone(MATRIZ_DEFAULT); m.users=(m.users||[]).map(u=>({tipo:u.tipo||'cc', nombre:u.nombre, centros:u.centros||[]})); return m; }catch(e){return structuredClone(DEFAULT_CFG);} }
+function saveCfg(){ localStorage.setItem(LS.cfg, JSON.stringify(cfg)); }
+function loadHist(){ try{return JSON.parse(localStorage.getItem(LS.hist))||[];}catch(e){return[];} }
+function saveHist(h){ localStorage.setItem(LS.hist, JSON.stringify(h)); }
+function saveCurrent(ds){
+  // Guarda dataset compacto para recargar sin volver a subir. Puede exceder cuota => se ignora.
+  try{
+    const compact = {period:ds.period,periodKey:ds.periodKey,diasPeriodo:ds.diasPeriodo,centers:ds.centers,
+      products:ds.products.map(p=>({m:p.m, cells:p.cells}))};
+    localStorage.setItem(LS.cur, JSON.stringify(compact));
+  }catch(e){ console.warn('No se pudo guardar el informe completo (cuota).'); }
+}
+function loadCurrent(){
+  try{
+    const c=JSON.parse(localStorage.getItem(LS.cur));
+    if(!c) return null;
+    c.products.forEach(p=>{ p.meta=metaFrom(p.m); });
+    c.isConsolidated = c.centers.length===0;
+    if(!c.diasPeriodo) c.diasPeriodo=30;
+    return c;
+  }catch(e){return null;}
+}
+function metaFrom(m){ // m = arreglo de metadata en orden META
+  return {codigo:m[0],nombre:m[1],unimed:m[2],marca:m[3],linea:m[4],lapso:m[5],fecha:m[6],cantidad:m[7],costo:num(m[8]),ultValor:m[9],edad:m[10],refe:m[11],nprecio:m[12]};
+}
+
+/* ============================================================
+   PARSEO DEL EXCEL
+============================================================ */
+function num(v){ const n = typeof v==='number'?v:parseFloat(String(v).replace(/[^\d.\-]/g,'')); return isFinite(n)?n:0; }
+
+function parseWorkbook(wb){
+  const ws = wb.Sheets[wb.SheetNames[0]];
+  const rows = XLSX.utils.sheet_to_json(ws, {header:1, defval:null, raw:true, blankrows:true});
+  let hdr = rows.findIndex(r=> r && String(r[0]).trim()==='CODIGO');
+  if(hdr<0) throw new Error('No se encontró la fila de encabezados (CODIGO). ¿Es el reporte de Rotación & Saldos por Bodega?');
+  const names = rows[hdr-2]||[], codes = rows[hdr-1]||[], header = rows[hdr];
+  // centros de costo: pares desde col 13, nombre en la col RT
+  const centers = []; let hasTotal=false;
+  for(let c=13; c<header.length; c+=2){
+    const nm = names[c];
+    if(!nm) continue;
+    if(String(nm).trim()==='TTOTAL'){ hasTotal=true; continue; }
+    centers.push({name:String(nm).trim(), code:codes[c]?String(codes[c]).trim():'', idxRT:c, idxSD:c+1});
+  }
+  // periodo
+  let period='—', periodKey='', diasPeriodo=30;
+  for(let i=0;i<Math.min(rows.length,8);i++){
+    const cell = rows[i] && rows[i][1];
+    if(cell && String(cell).includes('Fecha')){
+      const m = String(cell).match(/(\d{4})\/(\d{2})\/(\d{2}).*?(\d{4})\/(\d{2})\/(\d{2})/);
+      if(m){
+        period = `${m[1]}/${m[2]}/${m[3]} → ${m[4]}/${m[5]}/${m[6]}`; periodKey = `${m[4]}-${m[5]}`;
+        const d1=new Date(+m[1],+m[2]-1,+m[3]), d2=new Date(+m[4],+m[5]-1,+m[6]);
+        const dd=Math.round((d2-d1)/864e5)+1; if(dd>0&&dd<400) diasPeriodo=dd;
+      }
+      break;
+    }
+  }
+  // productos
+  const products = [];
+  for(let i=hdr+1;i<rows.length;i++){
+    const r = rows[i];
+    if(!r || r[META.codigo]==null || String(r[META.codigo]).trim()==='') continue;
+    const m = [];
+    for(const k in META) m[META[k]] = r[META[k]];
+    const cells = centers.map(cc=>[ num(r[cc.idxRT]), num(r[cc.idxSD]) ]);
+    products.push({m, meta:metaFrom(m), cells});
+  }
+  return {period, periodKey, diasPeriodo, centers, products, isConsolidated:centers.length===0, hasTotal};
+}
+
+/* ============================================================
+   MOTOR DE SUGERIDO
+============================================================ */
+/* Horizonte: normaliza la rotación del periodo del informe al horizonte objetivo
+   (semanal/mensual/custom). Así un informe mensual puede dar sugerido semanal y viceversa. */
+function horizonteDias(){ return cfg.std.horizonteDias>0 ? cfg.std.horizonteDias : 30; }
+function diasPeriodo(){ return (dataset && dataset.diasPeriodo>0) ? dataset.diasPeriodo : 30; }
+function rotHorizonte(rt){ return rt * (horizonteDias()/diasPeriodo()); }
+
+function clasificar(rotH){
+  const s=cfg.std;
+  if(rotH<=0) return 'nula';
+  if(rotH<=s.umbralBaja) return 'baja';
+  if(rotH<=s.umbralMedia) return 'media';
+  return 'alta';
+}
+function factorDe(banda){ const s=cfg.std; return {baja:s.factorBaja,media:s.factorMedia,alta:s.factorAlta,nula:0}[banda]; }
+function redondear(x){ return cfg.std.redondeo==='floor'?Math.floor(x):cfg.std.redondeo==='round'?Math.round(x):Math.ceil(x); }
+
+function evaluar(rt, sd, costo, objOverride){
+  const s=cfg.std;
+  const rotH = rotHorizonte(rt);           // demanda proyectada al horizonte
+  const banda = clasificar(rotH);
+  const objetivo = (objOverride!=null && objOverride>=0) ? objOverride : (rotH>0 ? Math.max(0, redondear(rotH*factorDe(banda))) : 0);
+  let estado='OK', sugerido=0;
+  if(rotH<s.rotMin && rotH>0){ // rotación demasiado baja para sugerir compra
+    if(sd<=0){ estado='INACTIVO'; } else if(sd>objetivo*s.sobrestock && objetivo>0){ estado='SOBRESTOCK'; } else { estado='OK'; }
+  } else if(rotH<=0){
+    estado = sd>0 ? 'INACTIVO' : 'SINMOV';
+  } else if(sd<=0){
+    estado='QUIEBRE'; sugerido = Math.max(objetivo,1);
+  } else if(sd<objetivo){
+    estado='BAJO'; sugerido = objetivo - sd;
+  } else if(sd > objetivo*s.sobrestock){
+    estado='SOBRESTOCK';
+  } else { estado='OK'; }
+  return {banda, objetivo, estado, sugerido, valor: sugerido*costo, rotH};
+}
+function horizonteLabel(){ const t=cfg.std.horizonteTipo; return t==='semanal'?'Semanal':t==='mensual'?'Mensual':`${horizonteDias()} días`; }
+
+/* ---- HISTORIAL DE DEMANDA + STOCK DE SEGURIDAD (mejora avanzada) ----
+   Al cargar varios informes, se acumula la demanda diaria por (producto × centro).
+   objetivo = demanda_horizonte + z(nivel de servicio) × desviación × sqrt(horizonte) */
+let histStats = new Map();   // key -> {n, mean, M2}  (demanda diaria, Welford)
+let histPeriodos = [];
+function keyPC(codigo, center){ return String(codigo)+'||'+(center.code||center.name); }
+function ingestHistorial(ds){
+  if(!ds || ds.isConsolidated) return;
+  histPeriodos.push(ds.periodKey||ds.period||('carga '+(histPeriodos.length+1)));
+  const dias = ds.diasPeriodo||30;
+  ds.products.forEach(p=>{
+    ds.centers.forEach((c,i)=>{
+      const daily = (p.cells[i][0]||0)/dias;
+      const k=keyPC(p.meta.codigo, c);
+      let s=histStats.get(k); if(!s){s={n:0,mean:0,M2:0};histStats.set(k,s);}
+      s.n++; const d=daily-s.mean; s.mean+=d/s.n; s.M2+=d*(daily-s.mean);
+    });
+  });
+}
+function statOf(codigo, center){ const s=histStats.get(keyPC(codigo,center)); if(!s||s.n<1)return null; const varr=s.n>1?s.M2/(s.n-1):0; return {mean:s.mean, std:Math.sqrt(Math.max(0,varr)), n:s.n}; }
+function zNivel(pct){ const t={50:0,80:0.84,85:1.04,90:1.28,95:1.645,97:1.88,98:2.05,99:2.33}; const keys=Object.keys(t).map(Number); let best=90; keys.forEach(k=>{ if(Math.abs(k-pct)<Math.abs(best-pct)) best=k; }); return t[best]; }
+function objetivoHist(codigo, center){
+  const st=statOf(codigo,center); if(!st||st.n<2) return null;   // requiere ≥2 periodos
+  const H=horizonteDias(), z=zNivel(cfg.std.nivelServicio||90);
+  const demandaH=st.mean*H, ss=z*st.std*Math.sqrt(H);
+  if(demandaH<=0 && ss<=0) return {objetivo:0, demandaH, ss, n:st.n};
+  return {objetivo:Math.max(0, redondear(demandaH+ss)), demandaH, ss, n:st.n};
+}
+/* Evaluación con contexto de centro: aplica histórico si está activo y disponible */
+function evaluarPC(p, cidx, rt, sd){
+  let ov=null;
+  if(cidx>=0 && cfg.std.usarHistorico && histStats.size){
+    const oh=objetivoHist(p.meta.codigo, dataset.centers[cidx]);
+    if(oh) ov=oh.objetivo;
+  }
+  return evaluar(rt, sd, p.meta.costo, ov);
+}
+
+/* ---- CLASIFICACIÓN ABC (por contribución al valor de rotación global) ---- */
+let abcMap=new Map();
+function computeABC(){
+  abcMap=new Map(); if(!dataset)return;
+  const arr=dataset.products.map(p=>{ let rt=0; for(const c of p.cells) rt+=c[0]; return {cod:String(p.meta.codigo), val:rt*p.meta.costo}; });
+  const total=arr.reduce((a,x)=>a+x.val,0)||1;
+  arr.sort((a,b)=>b.val-a.val);
+  let acc=0;
+  for(const x of arr){ acc+=x.val; const pct=acc/total; abcMap.set(x.cod, pct<=0.8?'A':pct<=0.95?'B':'C'); }
+}
+function abcDe(cod){ return abcMap.get(String(cod))||'C'; }
+
+/* Calcula filas de sugerido para un índice de centro (o consolidado si idx=-1) */
+function filasCentro(cidx){
+  const rows=[];
+  // para consolidado (cidx<0): admin suma todos; comprador suma solo sus bodegas visibles
+  const consolidadoIdx = (cidx<0 && role!=='admin') ? visibleCenters().map(c=>c.idx) : null;
+  for(const p of dataset.products){
+    let rt, sd;
+    if(cidx<0){
+      rt=0; sd=0;
+      if(consolidadoIdx){ for(const i of consolidadoIdx){ rt+=p.cells[i][0]; sd+=p.cells[i][1]; } }
+      else { for(const c of p.cells){ rt+=c[0]; sd+=c[1]; } }
+    }
+    else { rt=p.cells[cidx][0]; sd=p.cells[cidx][1]; }
+    if(rt===0 && sd===0) continue;
+    const ev = evaluarPC(p, cidx, rt, sd);
+    rows.push({p, rt, sd, ...ev});
+  }
+  return rows;
+}
+
+/* ============================================================
+   ROLES / VISTAS
+============================================================ */
+function matrizCodes(){ return new Set((cfg.matrizBodegas||[]).map(b=>String(b.code||'').trim()).filter(Boolean)); }
+function matrizNames(){ return new Set((cfg.matrizBodegas||[]).map(b=>String(b.name||'').trim().toUpperCase()).filter(Boolean)); }
+/* Un centro es BODEGA (comprador) si su código está en la matriz. Fallback por nombre. */
+function esBodega(c){
+  const codes=matrizCodes();
+  if(c.code && codes.has(String(c.code).trim())) return true;
+  return matrizNames().has(String(c.name||'').trim().toUpperCase());
+}
+function usuariosDe(tipo){ return cfg.users.filter(u=>u.tipo===tipo); }
+
+function visibleCenters(){
+  const all = dataset.centers.map((c,i)=>({...c,idx:i, bodega:esBodega(c)}));
+  if(role==='admin') return all;
+  if(role==='comprador'){
+    // compradores se miden por BODEGAS (todas, o las asignadas si tiene asignación)
+    const u = cfg.users.find(x=>x.nombre===currentUser && x.tipo==='comprador');
+    const bod = all.filter(c=>c.bodega);
+    if(u && u.centros && u.centros.length){ const set=new Set(u.centros); return bod.filter(c=>set.has(c.name)||set.has(c.code)); }
+    return bod; // todas las bodegas
+  }
+  // usuario de centro de costo pequeño: solo sus centros asignados, EXCLUYENDO bodegas
+  const u = cfg.users.find(x=>x.nombre===currentUser && x.tipo==='cc');
+  const set = new Set(u?u.centros:[]);
+  return all.filter(c=>!c.bodega && set.has(c.name));
+}
+/* universo de centros pequeños (no bodega) para asignaciones */
+function centrosPequenos(){ return dataset? dataset.centers.filter(c=>!esBodega(c)) : []; }
+function bodegasEnInforme(){ return dataset? dataset.centers.filter(c=>esBodega(c)) : []; }
+
+function setRole(r){
+  if(r==='admin'){
+    openModal('pinModal'); document.getElementById('pinEntry').value=''; document.getElementById('pinErr').textContent='';
+    setTimeout(()=>document.getElementById('pinEntry').focus(),50);
+    return;
+  }
+  const lista = usuariosDe(r);
+  if(lista.length===0){ toast(`No hay usuarios de tipo ${r==='comprador'?'Comprador':'Centro pequeño'}. Un administrador debe crearlos.`,'err'); }
+  role=r;
+  currentUser = lista.length? (currentUser && lista.find(u=>u.nombre===currentUser)? currentUser : lista[0].nombre) : null;
+  applyRoleUI();
+  if(dataset) refreshAll();
+}
+function tryPin(){
+  const v=document.getElementById('pinEntry').value;
+  if(v===cfg.adminPin){ role='admin'; currentUser=null; closeModal('pinModal'); applyRoleUI(); if(dataset) refreshAll(); }
+  else { document.getElementById('pinErr').textContent='PIN incorrecto.'; }
+}
+function applyRoleUI(){
+  document.getElementById('roleAdmin').classList.toggle('on', role==='admin');
+  document.getElementById('roleComprador').classList.toggle('on', role==='comprador');
+  document.getElementById('roleUser').classList.toggle('on', role==='cc');
+  document.querySelectorAll('[data-admin]').forEach(el=>el.classList.toggle('hidden', role!=='admin'));
+  const chip=document.getElementById('userChip');
+  const lista = role==='admin'? [] : usuariosDe(role);
+  if(role!=='admin' && lista.length){
+    chip.classList.remove('hidden');
+    const ico = role==='comprador'?'🛒':'👤';
+    chip.innerHTML = `${ico} <select id="userPicker" style="background:transparent;border:none;color:#fff;font-weight:600" onchange="switchUser(this.value)">`+
+      lista.map(u=>`<option ${u.nombre===currentUser?'selected':''}>${esc(u.nombre)}</option>`).join('')+`</select>`;
+  } else chip.classList.add('hidden');
+  if(role!=='admin' && currentView==='config') go('sugeridos');
+}
+function switchUser(n){ currentUser=n; if(dataset) refreshAll(); }
+
+/* ============================================================
+   NAVEGACIÓN
+============================================================ */
+let currentView='sugeridos';
+function go(v){
+  if(v==='config' && role!=='admin'){ setRole('admin'); return; }
+  currentView=v;
+  document.querySelectorAll('.tabs button').forEach(b=>b.classList.toggle('on', b.dataset.tab===v));
+  document.querySelectorAll('#app section').forEach(s=>s.classList.toggle('hidden', s.dataset.view!==v));
+  if(!dataset && v!=='cargar' && v!=='config'){ /* nada */ }
+  if(v==='sugeridos'){ syncHorizonteUI(); renderSugeridos(); }
+  if(v==='centros') renderCentros();
+  if(v==='alertas') renderAlertas();
+  if(v==='sustitutos') renderSustitutos();
+  if(v==='traslados') renderTraslados();
+  if(v==='config') renderConfig();
+  if(v==='cargar') renderHist();
+}
+
+/* ============================================================
+   CARGA DE ARCHIVO
+============================================================ */
+const fileInput=document.getElementById('fileInput');
+fileInput.addEventListener('change',e=>{ if(e.target.files[0]) handleFile(e.target.files[0]); e.target.value=''; });
+['dz0','dz1'].forEach(id=>{
+  const dz=document.getElementById(id); if(!dz)return;
+  dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('drag');});
+  dz.addEventListener('dragleave',()=>dz.classList.remove('drag'));
+  dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('drag'); if(e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);});
+});
+const histInput=document.getElementById('histInput');
+if(histInput){
+  histInput.addEventListener('change',e=>{ if(e.target.files.length) handleHistFiles([...e.target.files]); e.target.value=''; });
+  const dzh=document.getElementById('dzHist');
+  dzh.addEventListener('dragover',e=>{e.preventDefault();dzh.classList.add('drag');});
+  dzh.addEventListener('dragleave',()=>dzh.classList.remove('drag'));
+  dzh.addEventListener('drop',e=>{e.preventDefault();dzh.classList.remove('drag'); if(e.dataTransfer.files.length) handleHistFiles([...e.dataTransfer.files]);});
+}
+/* Procesa varios informes: los ordena por periodo y acumula el historial de demanda */
+async function handleHistFiles(files){
+  toast('<span class="spin"></span> Procesando '+files.length+' informes…');
+  const parsed=[];
+  for(const f of files){
+    try{
+      const buf=await f.arrayBuffer();
+      const ds=parseWorkbook(XLSX.read(buf,{type:'array'}));
+      if(!ds.isConsolidated && ds.products.length) parsed.push(ds);
+    }catch(err){ console.warn('Archivo omitido:',f.name,err.message); }
+  }
+  if(!parsed.length){ toast('Ningún informe válido (¿todos consolidados?).','err'); return; }
+  parsed.sort((a,b)=>String(a.periodKey).localeCompare(String(b.periodKey)));
+  // dedupe por periodo: si suben el mismo periodo dos veces, se queda el último
+  const porPeriodo=new Map(); parsed.forEach(ds=>porPeriodo.set(ds.periodKey||('c'+Math.random()), ds));
+  const unicos=[...porPeriodo.values()];
+  histStats=new Map(); histPeriodos=[];
+  unicos.forEach(ds=>ingestHistorial(ds));
+  const ultimo=unicos[unicos.length-1];
+  prevSnapshot = null; const h=loadHist(); prevSnapshot = h.length? h[h.length-1] : null;
+  computeDiffs(ultimo); dataset=ultimo; saveCurrent(ultimo); computeABC();
+  document.getElementById('histIngCount').textContent=histPeriodos.length+' periodos';
+  document.getElementById('histIngList').innerHTML='Periodos en el historial de demanda: <b>'+histPeriodos.join('</b>, <b>')+'</b>. Activa "Usar historial" en Configuración para aplicar el stock de seguridad.';
+  if(!cfg.std.usarHistorico){ cfg.std.usarHistorico=true; saveCfg(); }
+  showApp(); refreshAll();
+  toast(`Historial cargado: ${histPeriodos.length} periodos. Stock de seguridad activado.`,'ok');
+}
+
+function handleFile(file){
+  toast('<span class="spin"></span> Procesando '+esc(file.name)+'…');
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    try{
+      const wb=XLSX.read(ev.target.result,{type:'array'});
+      const ds=parseWorkbook(wb);
+      if(ds.products.length===0) throw new Error('No se encontraron productos en el archivo.');
+      onDatasetLoaded(ds, true);
+      if(ds.isConsolidated){
+        toast('Informe cargado, pero es CONSOLIDADO (sin bodegas).','err');
+      } else {
+        toast(`Informe cargado: ${ds.centers.length} centros, ${ds.products.length} productos.`,'ok');
+      }
+    }catch(err){ console.error(err); toast('Error: '+err.message,'err'); }
+  };
+  reader.onerror=()=>toast('No se pudo leer el archivo.','err');
+  reader.readAsArrayBuffer(file);
+}
+
+function onDatasetLoaded(ds, isNew){
+  // comparar con snapshot anterior
+  const hist = loadHist();
+  prevSnapshot = hist.length? hist[hist.length-1] : null;
+  computeDiffs(ds);
+  dataset=ds;
+  saveCurrent(ds);
+  ingestHistorial(ds);
+  computeABC();
+  if(isNew){
+    // registrar en historial (si el periodo ya existe, reemplaza)
+    const rows = ds.isConsolidated? [] : filasCentro(-1);
+    const nQuiebres = ds.isConsolidated?0:rows.filter(r=>r.estado==='QUIEBRE').length;
+    const valSug = rows.reduce((a,r)=>a+r.valor,0);
+    const snap = {periodKey:ds.periodKey||('carga-'+Date.now()), period:ds.period, uploadedAt:new Date().toISOString(),
+      centers:ds.centers.map(c=>c.name), productCodes:ds.products.map(p=>String(p.meta.codigo)),
+      nCentros:ds.centers.length, nProd:ds.products.length, nQuiebres, valSug};
+    let h=loadHist(); const ex=h.findIndex(x=>x.periodKey===snap.periodKey);
+    if(ex>=0) h[ex]=snap; else h.push(snap);
+    saveHist(h);
+  }
+  showApp();
+  refreshAll();
+}
+
+function computeDiffs(ds){
+  diffCenters={nuevos:[],cerrados:[]}; newProducts=[];
+  if(!prevSnapshot) return;
+  const prevC=new Set(prevSnapshot.centers||[]); const curC=new Set(ds.centers.map(c=>c.name));
+  diffCenters.nuevos = [...curC].filter(x=>!prevC.has(x));
+  diffCenters.cerrados = [...prevC].filter(x=>!curC.has(x));
+  const prevP=new Set(prevSnapshot.productCodes||[]);
+  newProducts = ds.products.filter(p=>!prevP.has(String(p.meta.codigo))).map(p=>p.meta);
+}
+
+/* ============================================================
+   RENDER: SUGERIDOS
+============================================================ */
+function fillCenterSelect(sel, includeConsolidated){
+  const vis=visibleCenters();
+  let html='';
+  if(includeConsolidated && !dataset.isConsolidated){
+    if(role==='admin') html+=`<option value="-1">◆ Consolidado (todos los centros)</option>`;
+    else if(role==='comprador') html+=`<option value="-1">◆ Consolidado (mis bodegas)</option>`;
+  }
+  html+=vis.map(c=>`<option value="${c.idx}">${esc(c.name)}${c.code?' · '+esc(c.code):''}</option>`).join('');
+  const cur=sel.value; sel.innerHTML=html;
+  if([...sel.options].some(o=>o.value===cur)) sel.value=cur;
+}
+
+function renderSugeridos(){
+  if(!dataset) return;
+  if(dataset.isConsolidated){
+    document.getElementById('sugBody').innerHTML='';
+    document.getElementById('sugKpis').innerHTML='';
+    document.getElementById('sugDesc').innerHTML='<b style="color:var(--red)">Este informe es consolidado y no tiene desglose por bodega.</b> Sube el reporte por bodega para calcular sugeridos por centro de costo.';
+    return;
+  }
+  const sel=document.getElementById('ccSelect');
+  fillCenterSelect(sel,true);
+  const vis=visibleCenters();
+  if(vis.length===0 && role!=='admin'){
+    const msg = role==='comprador' ? 'No tienes bodegas asignadas ni hay bodegas en el informe. Revisa la matriz de bodegas.' : 'No tienes centros de costo asignados. Pide a un administrador que te asigne.';
+    document.getElementById('sugBody').innerHTML=`<tr><td colspan="9" class="alert-empty">${msg}</td></tr>`;
+    document.getElementById('sugKpis').innerHTML=''; return;
+  }
+  const cidx=parseInt(sel.value);
+  const cname = cidx<0?'Consolidado':(dataset.centers[cidx].name+(dataset.centers[cidx].code?' · '+dataset.centers[cidx].code:''));
+  let rows=filasCentro(cidx);
+
+  // KPIs
+  const q=rows.filter(r=>r.estado==='QUIEBRE');
+  const b=rows.filter(r=>r.estado==='BAJO');
+  const so=rows.filter(r=>r.estado==='SOBRESTOCK');
+  const totalSug=rows.reduce((a,r)=>a+r.sugerido,0);
+  const totalVal=rows.reduce((a,r)=>a+r.valor,0);
+  const capInmov=so.reduce((a,r)=>a+r.sd*r.p.meta.costo,0);
+  document.getElementById('sugKpis').innerHTML=[
+    kpi('gold','Valor a sugerir',fmtMoney(totalVal),`${fmt(totalSug)} unidades`),
+    kpi('red','Quiebres',fmt(q.length),'con demanda, sin saldo'),
+    kpi('gold','Bajo objetivo',fmt(b.length),'por debajo del mínimo'),
+    kpi('blue','Sobrestock',fmt(so.length),fmtMoney(capInmov)+' inmovilizado'),
+    kpi('green','Referencias activas',fmt(rows.filter(r=>r.rt>0).length),'con rotación')
+  ].join('');
+
+  // filtros
+  const est=document.getElementById('estadoFilter').value;
+  const term=document.getElementById('sugSearch').value.trim().toLowerCase();
+  if(est==='sugerir') rows=rows.filter(r=>r.sugerido>0);
+  else if(est!=='all') rows=rows.filter(r=>r.estado===est);
+  if(term) rows=rows.filter(r=> (r.p.meta.nombre+' '+r.p.meta.codigo+' '+r.p.meta.marca+' '+r.p.meta.refe).toLowerCase().includes(term));
+
+  // orden
+  rows.sort((a,b)=>{
+    const k=sugSort.k;
+    let av,bv;
+    if(k==='nombre'||k==='marca'){ av=(a.p.meta[k]||'').toString().toLowerCase(); bv=(b.p.meta[k]||'').toString().toLowerCase(); return av<bv?-sugSort.dir:av>bv?sugSort.dir:0; }
+    av=a[k]; bv=b[k]; return (av-bv)*sugSort.dir;
+  });
+
+  document.getElementById('sugTitle').textContent = (cidx<0?'Consolidado — ':'')+cname;
+  document.getElementById('sugCount').textContent = fmt(rows.length)+' ítems';
+  document.getElementById('sugDesc').textContent = `Sugerido ${horizonteLabel().toLowerCase()} · informe de ${dataset.diasPeriodo} días${cfg.std.usarHistorico&&histStats.size?` · con stock de seguridad (${histPeriodos.length} periodos, ${cfg.std.nivelServicio||90}% servicio)`:''} (${dataset.period})`;
+
+  const body=document.getElementById('sugBody');
+  if(rows.length===0){ body.innerHTML='<tr><td colspan="9" class="alert-empty">Sin resultados para el filtro seleccionado.</td></tr>'; syncSortUI(); return; }
+  const frag=[];
+  for(const r of rows.slice(0,600)){
+    const m=r.p.meta;
+    const isNew = newProducts.some(np=>String(np.codigo)===String(m.codigo));
+    frag.push(`<tr>
+      <td>${estadoTag(r.estado)}${isNew?' <span class="tag t-nuevo">Nuevo</span>':''}</td>
+      <td class="nombre">${esc(cleanName(m.nombre))} <span class="abc abc-${abcDe(m.codigo)}">${abcDe(m.codigo)}</span><small class="code">${esc(m.codigo)} · ${esc(m.linea)}</small></td>
+      <td>${esc(m.marca)}</td>
+      <td class="num tnum">${fmt(r.rt)}</td>
+      <td class="num tnum" ${r.sd<0?'style="color:var(--red)"':''}>${fmt(r.sd)}</td>
+      <td class="num tnum">${fmt(r.objetivo)}</td>
+      <td class="num"><span class="sug-val ${r.sugerido>0?'pos':''}">${r.sugerido>0?fmt(r.sugerido):'—'}</span></td>
+      <td class="num tnum">${r.valor>0?fmtMoney(r.valor):'—'}</td>
+      <td>${r.estado==='QUIEBRE'?`<button class="btn ghost sm" onclick="showSubstFor('${jsstr(m.codigo)}',${cidx})">Alternativas</button>`:''}</td>
+    </tr>`);
+  }
+  if(rows.length>600) frag.push(`<tr><td colspan="9" class="alert-empty">Mostrando primeros 600 de ${fmt(rows.length)}. Usa filtros o exporta a Excel para ver todo.</td></tr>`);
+  body.innerHTML=frag.join('');
+  syncSortUI();
+}
+function syncSortUI(){
+  document.querySelectorAll('#sugTable thead th[data-k]').forEach(th=>{
+    const on=th.dataset.k===sugSort.k; th.classList.toggle('sorted',on);
+    const arr=th.querySelector('.arr'); if(arr) arr.textContent= on ? (sugSort.dir<0?'▼':'▲') : '▼';
+  });
+}
+document.querySelectorAll('#sugTable thead th[data-k]').forEach(th=>{
+  th.addEventListener('click',()=>{ const k=th.dataset.k; if(sugSort.k===k) sugSort.dir*=-1; else {sugSort.k=k; sugSort.dir=(k==='nombre'||k==='marca')?1:-1;} renderSugeridos(); });
+});
+
+/* ============================================================
+   HORIZONTE (semanal / mensual / custom)
+============================================================ */
+function setHorizonte(tipo){
+  cfg.std.horizonteTipo=tipo;
+  if(tipo==='semanal') cfg.std.horizonteDias=7;
+  else if(tipo==='mensual') cfg.std.horizonteDias=30;
+  else if(tipo==='custom' && (!cfg.std.horizonteDias || cfg.std.horizonteDias===7 || cfg.std.horizonteDias===30)) cfg.std.horizonteDias=15;
+  saveCfg(); syncHorizonteUI();
+  if(dataset) refreshAll();
+}
+function setHorizonteDias(v){ const n=parseInt(v)||15; cfg.std.horizonteDias=Math.max(1,Math.min(365,n)); cfg.std.horizonteTipo='custom'; saveCfg(); syncHorizonteUI(); if(dataset) refreshAll(); }
+function syncHorizonteUI(){
+  const t=cfg.std.horizonteTipo;
+  document.querySelectorAll('#horizonteSeg button, #horizonteSeg2 button').forEach(b=>b.classList.toggle('on', b.dataset.h===t));
+  const di=document.getElementById('horizonteDaysInput');
+  if(di){ di.classList.toggle('hidden', t!=='custom'); di.value=cfg.std.horizonteDias; }
+}
+
+/* ============================================================
+   RENDER: CENTROS (dashboard visual)
+============================================================ */
+function statsPorCentro(){
+  const vis=visibleCenters();
+  return vis.map(c=>{
+    let valor=0,unidades=0,q=0,bajo=0,sobre=0,capInmov=0,activos=0;
+    for(const p of dataset.products){
+      const rt=p.cells[c.idx][0], sd=p.cells[c.idx][1];
+      if(rt===0&&sd===0) continue;
+      const ev=evaluarPC(p, c.idx, rt, sd);
+      if(rt>0) activos++;
+      if(ev.estado==='QUIEBRE') q++;
+      else if(ev.estado==='BAJO') bajo++;
+      else if(ev.estado==='SOBRESTOCK'){ sobre++; capInmov+=sd*p.meta.costo; }
+      valor+=ev.valor; unidades+=ev.sugerido;
+    }
+    return {...c, valor, unidades, q, bajo, sobre, capInmov, activos};
+  });
+}
+function renderCentros(){
+  if(!dataset) return;
+  if(dataset.isConsolidated){
+    document.getElementById('ccList').innerHTML='<div class="alert-empty">Informe consolidado: no hay desglose por centro de costo.</div>';
+    document.getElementById('ccKpis').innerHTML=''; return;
+  }
+  syncHorizonteUI();
+  let stats=statsPorCentro();
+  if(stats.length===0){ document.getElementById('ccList').innerHTML='<div class="alert-empty">No tienes centros asignados.</div>'; document.getElementById('ccKpis').innerHTML=''; return; }
+
+  // KPIs globales
+  const totV=stats.reduce((a,s)=>a+s.valor,0), totU=stats.reduce((a,s)=>a+s.unidades,0), totQ=stats.reduce((a,s)=>a+s.q,0);
+  const conQ=stats.filter(s=>s.q>0).length;
+  document.getElementById('ccKpis').innerHTML=[
+    kpi('violet','Centros visibles',fmt(stats.length),`${conQ} con quiebres`),
+    kpi('gold','Valor total a sugerir',fmtMoney(totV),`${fmt(totU)} unidades · horizonte ${horizonteLabel().toLowerCase()}`),
+    kpi('red','Quiebres totales',fmt(totQ),'demanda sin saldo'),
+    kpi('blue','Capital en sobrestock',fmtMoney(stats.reduce((a,s)=>a+s.capInmov,0)),'inmovilizado')
+  ].join('');
+
+  // filtro + orden
+  const term=document.getElementById('ccSearch').value.trim().toLowerCase();
+  if(term) stats=stats.filter(s=>(s.name+' '+s.code).toLowerCase().includes(term));
+  const tipoF=document.getElementById('ccTipo')?document.getElementById('ccTipo').value:'todos';
+  if(tipoF==='bodega') stats=stats.filter(s=>esBodega(s));
+  else if(tipoF==='pequeno') stats=stats.filter(s=>!esBodega(s));
+  const ord=document.getElementById('ccOrder').value;
+  const sorters={valor:(a,b)=>b.valor-a.valor,quiebres:(a,b)=>b.q-a.q||b.valor-a.valor,unidades:(a,b)=>b.unidades-a.unidades,sobrestock:(a,b)=>b.sobre-a.sobre,nombre:(a,b)=>a.name.localeCompare(b.name)};
+  stats.sort(sorters[ord]||sorters.valor);
+
+  const metricForBar = ord==='unidades'?'unidades':(ord==='quiebres'?'q':(ord==='sobrestock'?'sobre':'valor'));
+  const maxV=Math.max(1,...stats.map(s=>s[metricForBar]));
+  const barColor=s=> s.q>0 ? 'linear-gradient(90deg,#BC3A38,#d76a4c)' : s.bajo>0 ? 'linear-gradient(90deg,#C9880A,#e0a83a)' : 'linear-gradient(90deg,#2F5DAA,#4d82d6)';
+  const barText=s=> metricForBar==='valor'?fmtMoney(s.valor): metricForBar==='q'?fmt(s.q)+' q': fmt(s[metricForBar]);
+
+  document.getElementById('ccTitle').textContent='Centros de costo';
+  document.getElementById('ccCount').textContent=fmt(stats.length)+' centros';
+  document.getElementById('ccDesc').textContent=`Sugerido ${horizonteLabel().toLowerCase()} · periodo ${dataset.period}`;
+
+  document.getElementById('ccList').innerHTML = stats.map(s=>{
+    const w=Math.max(2,(s[metricForBar]/maxV)*100);
+    return `<div class="cc-row" onclick="verCentro(${s.idx})" title="Ver sugeridos de ${esc(s.name)}">
+      <div class="cc-id"><b>${esc(s.name)} ${esBodega(s)?'<span class="tag t-sobre" style="pointer-events:none;font-size:9px">Bodega</span>':'<span class="tag t-inactivo" style="pointer-events:none;font-size:9px">Pequeño</span>'}</b><span class="code">Cód. ${esc(s.code||'—')} · ${fmt(s.activos)} refs activas</span></div>
+      <div class="cc-bar-wrap"><div class="cc-bar" style="width:${w}%;background:${barColor(s)}"><span>${barText(s)}</span></div></div>
+      <div class="cc-metrics">
+        ${s.q?`<span class="mtag m-q">${s.q} quiebre${s.q>1?'s':''}</span>`:''}
+        ${s.bajo?`<span class="mtag m-b">${s.bajo} bajo</span>`:''}
+        ${s.sobre?`<span class="mtag m-s">${s.sobre} sobre</span>`:''}
+        <span class="mtag m-u">${fmt(s.unidades)} uds</span>
+      </div>
+      <div class="cc-go">›</div>
+    </div>`;
+  }).join('') || '<div class="alert-empty">Sin centros que coincidan con la búsqueda.</div>';
+}
+function verCentro(idx){
+  go('sugeridos');
+  const sel=document.getElementById('ccSelect');
+  if([...sel.options].some(o=>o.value===String(idx))){ sel.value=String(idx); renderSugeridos(); }
+}
+
+/* ============================================================
+   RENDER: ALERTAS
+============================================================ */
+function renderAlertas(){
+  if(!dataset) return;
+  const notices=[];
+  if(dataset.isConsolidated) notices.push(`<div class="notice warn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 3l9 16H3z" stroke="#8a6d10" stroke-width="2" stroke-linejoin="round"/><path d="M12 9v4M12 16v.5" stroke="#8a6d10" stroke-width="2" stroke-linecap="round"/></svg><div>Informe <b>consolidado</b>: las alertas por bodega no están disponibles. Sube el reporte con desglose por centro de costo.</div></div>`);
+  if(!prevSnapshot) notices.push(`<div class="notice info"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#2F5DAA" stroke-width="2"/><path d="M12 8v.01M12 11v5" stroke="#2F5DAA" stroke-width="2" stroke-linecap="round"/></svg><div>Este es el primer informe cargado, así que aún no hay comparación semana a semana. Al subir el siguiente, verás centros y productos nuevos o cerrados.</div></div>`);
+  document.getElementById('alertNotices').innerHTML=notices.join('');
+
+  const vis=visibleCenters();
+  const scope = role==='admin' ? dataset.centers.map((c,i)=>i) : vis.map(c=>c.idx);
+
+  // recolectar alertas dentro del alcance visible
+  let quiebres=[], negativos=[], sobrestock=[];
+  for(const ci of scope){
+    for(const p of dataset.products){
+      const rt=p.cells[ci][0], sd=p.cells[ci][1];
+      if(rt===0&&sd===0) continue;
+      const ev=evaluarPC(p, ci, rt, sd);
+      if(ev.estado==='QUIEBRE') quiebres.push({p,ci,rt,sd,sug:ev.sugerido,val:ev.valor});
+      if(sd<0) negativos.push({p,ci,sd});
+      if(ev.estado==='SOBRESTOCK') sobrestock.push({p,ci,sd,cap:sd*p.meta.costo});
+    }
+  }
+  quiebres.sort((a,b)=>b.val-a.val);
+  sobrestock.sort((a,b)=>b.cap-a.cap);
+  negativos.sort((a,b)=>a.sd-b.sd);
+
+  const cn=n=>{const c=dataset.centers[n];return c.name+(c.code?' · '+c.code:'');};
+  const grid=document.getElementById('alertGrid');
+  const blocks=[];
+
+  blocks.push(alertBlock('red','Quiebres con demanda', quiebres.length, quiebres.slice(0,80).map(x=>
+    `<div class="alert-item"><span class="tag t-quiebre" style="pointer-events:none"></span><div class="ti"><b>${esc(cleanName(x.p.meta.nombre))}</b><span>${esc(cn(x.ci))} · ${esc(x.p.meta.marca)}</span></div><div class="rt">RT ${fmt(x.rt)} · sug ${fmt(x.sug)}</div></div>`
+  ).join(''), 'Sin quiebres en tu alcance. 👍'));
+
+  // Ingresos de inventario nuevo
+  blocks.push(alertBlock('violet','Ingresos de inventario nuevo', newProducts.length,
+    (newProducts.length? newProducts.slice(0,80).map(m=>
+      `<div class="alert-item"><span class="tag t-nuevo" style="pointer-events:none"></span><div class="ti"><b>${esc(cleanName(m.nombre))}</b><span>${esc(m.codigo)} · ${esc(m.linea)} · ${esc(m.marca)}</span></div><div class="rt">${fmtMoney(m.costo)}</div></div>`
+    ).join(''):''),
+    prevSnapshot?'No hay productos nuevos frente al informe anterior.':'Se comparará al cargar el próximo informe.'));
+
+  blocks.push(alertBlock('blue','Sobrestock (capital inmovilizado)', sobrestock.length, sobrestock.slice(0,80).map(x=>
+    `<div class="alert-item"><span class="tag t-sobre" style="pointer-events:none"></span><div class="ti"><b>${esc(cleanName(x.p.meta.nombre))}</b><span>${esc(cn(x.ci))} · SD ${fmt(x.sd)}</span></div><div class="rt">${fmtMoney(x.cap)}</div></div>`
+  ).join(''), 'Sin sobrestock relevante.'));
+
+  blocks.push(alertBlock('red','Saldos negativos (revisar inventario)', negativos.length, negativos.slice(0,80).map(x=>
+    `<div class="alert-item"><span class="tag t-quiebre" style="pointer-events:none"></span><div class="ti"><b>${esc(cleanName(x.p.meta.nombre))}</b><span>${esc(cn(x.ci))}</span></div><div class="rt" style="color:var(--red)">SD ${fmt(x.sd)}</div></div>`
+  ).join(''), 'Sin saldos negativos.'));
+
+  // Centros nuevos / cerrados (solo admin, panorama global)
+  if(role==='admin'){
+    const chipsHtml =
+      (diffCenters.nuevos.length||diffCenters.cerrados.length)
+      ? `<div class="chips">${diffCenters.nuevos.map(c=>{const dc=dataset.centers.find(x=>x.name===c);return `<span class="chip new">+ ${esc(c)}${dc&&dc.code?' ('+esc(dc.code)+')':''}</span>`;}).join('')}${diffCenters.cerrados.map(c=>`<span class="chip closed">${esc(c)}</span>`).join('')}</div>`
+      : `<div class="alert-empty">${prevSnapshot?'Sin cambios de centros de costo frente al informe anterior.':'Se detectarán al cargar el próximo informe.'}</div>`;
+    blocks.push(`<div class="alert-block"><div class="ah"><div class="ic" style="background:var(--violet-soft)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M3 21V8l9-5 9 5v13M9 21v-6h6v6" stroke="#6A3FB2" stroke-width="2" stroke-linejoin="round"/></svg></div><h3>Centros de costo (nuevos / cerrados)</h3><span class="n" style="color:var(--violet)">${diffCenters.nuevos.length}/${diffCenters.cerrados.length}</span></div>${chipsHtml}</div>`);
+  }
+
+  grid.innerHTML=blocks.join('');
+  updateAlertCounts(quiebres.length, newProducts.length, negativos.length);
+}
+function updateAlertCounts(q,n,neg){
+  const total=q+n+neg+diffCenters.nuevos.length+diffCenters.cerrados.length;
+  const el=document.getElementById('cAlert'); el.textContent=total;
+  el.classList.toggle('hot', q>0||neg>0);
+}
+function alertBlock(color,title,n,inner,emptyMsg){
+  const map={red:['var(--red-soft)','#BC3A38'],violet:['var(--violet-soft)','#6A3FB2'],blue:['var(--blue-soft)','#2F5DAA'],gold:['var(--gold-soft)','#A96F06']};
+  const [bg,fg]=map[color];
+  return `<div class="alert-block"><div class="ah"><div class="ic" style="background:${bg}"><span style="width:9px;height:9px;border-radius:50%;background:${fg}"></span></div><h3>${title}</h3><span class="n" style="color:${fg}">${fmt(n)}</span></div><div class="alert-list">${inner||`<div class="alert-empty">${emptyMsg}</div>`}</div></div>`;
+}
+
+/* ============================================================
+   RENDER: SUSTITUTOS / SIMILARES
+============================================================ */
+function tokens(s){ return String(s||'').toUpperCase().replace(/::.*$/,'').replace(/[^A-Z0-9ÁÉÍÓÚÑ ]/g,' ').split(/\s+/).filter(w=>w.length>2); }
+function similarity(a,b){ const A=new Set(tokens(a)),B=new Set(tokens(b)); if(!A.size||!B.size)return 0; let i=0; A.forEach(x=>{if(B.has(x))i++;}); return i/(A.size+B.size-i); }
+
+/* dado un producto en quiebre en un centro, encuentra alternativas con stock */
+function alternativasPara(prod, cidx){
+  const base=prod.meta;
+  const cand=[];
+  for(const p of dataset.products){
+    if(p===prod) continue;
+    if((p.meta.linea||'')!==(base.linea||'')) continue; // misma línea
+    // stock disponible: en el mismo centro si es válido, o total
+    let sdCentro = cidx>=0 ? p.cells[cidx][1] : p.cells.reduce((a,c)=>a+c[1],0);
+    let sdTotal = p.cells.reduce((a,c)=>a+c[1],0);
+    if(sdTotal<=0) continue;
+    const sim=similarity(base.nombre, p.meta.nombre) + (p.meta.marca===base.marca?0.15:0);
+    if(sim<0.12) continue;
+    cand.push({p, sdCentro, sdTotal, costo:p.meta.costo, sim});
+  }
+  // ordenar por menor costo (requisito: costo más bajo), luego mayor similitud
+  cand.sort((a,b)=> a.costo-b.costo || b.sim-a.sim);
+  return cand;
+}
+
+function renderSustitutos(){
+  if(!dataset||dataset.isConsolidated){ document.getElementById('substBody').innerHTML='<tr><td colspan="5" class="alert-empty">No disponible en informes consolidados.</td></tr>'; return; }
+  const sel=document.getElementById('substCC'); fillCenterSelect(sel,true);
+  const cidx=parseInt(sel.value);
+  const term=document.getElementById('substSearch').value.trim().toLowerCase();
+  // quiebres del centro
+  let quiebres=[];
+  const scope = cidx<0 ? dataset.centers.map((c,i)=>i) : [cidx];
+  const seen=new Set();
+  for(const ci of scope){
+    for(const p of dataset.products){
+      const rt=p.cells[ci][0], sd=p.cells[ci][1];
+      if(rt>0 && sd<=0){
+        const key=p.meta.codigo; if(seen.has(key))continue;
+        quiebres.push({p,ci,rt});
+      }
+    }
+  }
+  if(term) quiebres=quiebres.filter(q=>(q.p.meta.nombre+' '+q.p.meta.linea).toLowerCase().includes(term));
+  quiebres.sort((a,b)=>b.rt-a.rt);
+
+  const rows=[];
+  let withAlt=0;
+  for(const q of quiebres.slice(0,300)){
+    const alts=alternativasPara(q.p, cidx<0?-1:cidx);
+    const best=alts[0];
+    if(best) withAlt++;
+    rows.push(`<tr>
+      <td class="nombre">${esc(cleanName(q.p.meta.nombre))}<small class="code">${esc(q.p.meta.codigo)}</small></td>
+      <td>${esc(q.p.meta.linea)}<small class="mini">${esc(q.p.meta.marca)}</small></td>
+      <td class="num tnum">${fmt(q.rt)}</td>
+      <td>${best?`<b>${esc(cleanName(best.p.meta.nombre))}</b><small class="mini">Stock ${fmt(cidx<0?best.sdTotal:best.sdCentro)} · <b style="color:var(--green)">${fmtMoney(best.costo)}</b></small>`:'<span class="mini">Sin alternativa con stock</span>'}</td>
+      <td>${alts.length?`<button class="btn ghost sm" onclick="showSubstFor('${jsstr(q.p.meta.codigo)}',${cidx})">Ver ${alts.length}</button>`:''}</td>
+    </tr>`);
+  }
+  document.getElementById('substCount').textContent = `${withAlt} con alternativa / ${quiebres.length} quiebres`;
+  document.getElementById('substBody').innerHTML = rows.length?rows.join(''):'<tr><td colspan="5" class="alert-empty">No hay quiebres en este alcance. 👍</td></tr>';
+}
+
+function showSubstFor(codigo, cidx){
+  const prod=dataset.products.find(p=>String(p.meta.codigo)===String(codigo));
+  if(!prod)return;
+  const alts=alternativasPara(prod, cidx<0?-1:cidx);
+  const cidxReal = (cidx===undefined||cidx===null)?-1:cidx;
+  let html=`<div class="subst-head"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 3l9 16H3z" stroke="#BC3A38" stroke-width="2" stroke-linejoin="round"/><path d="M12 9v4M12 16v.5" stroke="#BC3A38" stroke-width="2" stroke-linecap="round"/></svg><div><b>En quiebre:</b> ${esc(cleanName(prod.meta.nombre))}<br><span class="mini">${esc(prod.meta.linea)} · ${esc(prod.meta.marca)} · costo ${fmtMoney(prod.meta.costo)}</span></div></div>`;
+  if(!alts.length){ html+='<div class="alert-empty">No se encontraron referencias similares con inventario disponible.</div>'; }
+  else{
+    html+=alts.slice(0,15).map((a,i)=>{
+      const sd = cidxReal<0? a.sdTotal : a.sdCentro;
+      return `<div class="subst-item ${i===0?'cheapest':''}"><div class="ti"><b>${esc(cleanName(a.p.meta.nombre))}</b> ${i===0?'<span class="tag t-ok">Menor costo</span>':''}<br><span class="mini code">${esc(a.p.meta.codigo)} · ${esc(a.p.meta.marca)} · similitud ${(a.sim*100|0)}%</span></div><div class="best"><div class="sug-val" style="color:${i===0?'var(--green)':'var(--ink)'}">${fmtMoney(a.costo)}</div><span class="mini">stock ${fmt(sd)}</span></div></div>`;
+    }).join('');
+  }
+  document.getElementById('substModalBody').innerHTML=html;
+  openModal('substModal');
+}
+
+/* ============================================================
+   RENDER: TRASLADOS
+============================================================ */
+function computeTraslados(destFilterIdx){
+  // Para cada producto: centros en quiebre (dentro del alcance visible) y centros con excedente
+  const vis=visibleCenters(); const visIdx=new Set(vis.map(c=>c.idx));
+  const out=[];
+  for(const p of dataset.products){
+    // excedentes: centros con SD > objetivo*sobre (o simplemente SD holgado sin rotación)
+    const surplus=[]; const needs=[];
+    p.cells.forEach((c,i)=>{
+      const rt=c[0], sd=c[1];
+      const ev=evaluarPC(p, i, rt, sd);
+      if(rt>0 && sd<=0){ // quiebre
+        if(role!=='admin' && !visIdx.has(i)) return;
+        needs.push({idx:i, rt, sug:ev.sugerido});
+      }
+      // excedente: mucho saldo y poca/nula necesidad
+      if(sd>0 && (ev.estado==='SOBRESTOCK' || (rt<=0 && sd>0) || sd>ev.objetivo)){
+        const libre = ev.objetivo>0 ? sd-ev.objetivo : sd; // unidades que puede ceder
+        if(libre>0) surplus.push({idx:i, sd, libre});
+      }
+    });
+    if(!needs.length||!surplus.length) continue;
+    surplus.sort((a,b)=>b.libre-a.libre);
+    for(const n of needs){
+      if(destFilterIdx!=null && destFilterIdx>=0 && n.idx!==destFilterIdx) continue;
+      // toma del mayor excedente
+      let restante=n.sug||1;
+      for(const s of surplus){
+        if(s.idx===n.idx) continue;
+        if(s.libre<=0) continue;
+        const mover=Math.min(restante, s.libre);
+        if(mover<=0) continue;
+        out.push({p, origen:s.idx, destino:n.idx, disp:s.libre, demanda:n.rt, mover});
+        restante-=mover; s.libre-=mover;
+        if(restante<=0) break;
+      }
+    }
+  }
+  return out;
+}
+function renderTraslados(){
+  if(!dataset||dataset.isConsolidated){ document.getElementById('traslBody').innerHTML='<tr><td colspan="6" class="alert-empty">No disponible en informes consolidados.</td></tr>'; document.getElementById('cTrasl').textContent='0'; return; }
+  const sel=document.getElementById('traslDest');
+  // opciones de destino = centros visibles + "todos"
+  const vis=visibleCenters();
+  const cur=sel.value;
+  sel.innerHTML='<option value="-1">Todos los destinos</option>'+vis.map(c=>`<option value="${c.idx}">${esc(c.name)}${c.code?' · '+esc(c.code):''}</option>`).join('');
+  if([...sel.options].some(o=>o.value===cur)) sel.value=cur;
+  const dest=parseInt(sel.value);
+  let rows=computeTraslados(dest);
+  const term=document.getElementById('traslSearch').value.trim().toLowerCase();
+  if(term) rows=rows.filter(r=>(r.p.meta.nombre+' '+r.p.meta.marca).toLowerCase().includes(term));
+  rows.sort((a,b)=>b.mover-a.mover);
+  window._traslados=rows;
+  const cn=i=>{const c=dataset.centers[i];return c.name+(c.code?' · '+c.code:'');};
+  document.getElementById('traslCount').textContent=`${fmt(rows.length)} movimientos`;
+  document.getElementById('cTrasl').textContent=rows.length;
+  document.getElementById('traslBody').innerHTML = rows.length? rows.slice(0,500).map(r=>
+    `<tr><td class="nombre">${esc(cleanName(r.p.meta.nombre))}<small class="code">${esc(r.p.meta.codigo)}</small></td>
+     <td><b>${esc(cn(r.origen))}</b></td>
+     <td class="num tnum">${fmt(r.disp)}</td>
+     <td><b style="color:var(--gold-2)">${esc(cn(r.destino))}</b></td>
+     <td class="num tnum">${fmt(r.demanda)}</td>
+     <td class="num"><span class="sug-val pos">${fmt(r.mover)}</span></td></tr>`
+  ).join('') : '<tr><td colspan="6" class="alert-empty">No hay traslados sugeridos (no coinciden quiebres con excedentes).</td></tr>';
+}
+
+/* ============================================================
+   RENDER: CONFIG
+============================================================ */
+function renderConfig(){
+  const s=cfg.std;
+  const set=(id,v)=>{const e=document.getElementById(id); if(e)e.value=v;};
+  set('cfgUmbralBaja',s.umbralBaja); set('cfgUmbralMedia',s.umbralMedia);
+  set('cfgFactorBaja',s.factorBaja); set('cfgFactorMedia',s.factorMedia); set('cfgFactorAlta',s.factorAlta);
+  set('cfgRotMin',s.rotMin); set('cfgSobre',s.sobrestock); set('cfgRedondeo',s.redondeo);
+  set('cfgHorizonteTipo',s.horizonteTipo||'mensual'); set('cfgHorizonteDias',s.horizonteDias||30);
+  set('cfgUsarHist', s.usarHistorico?'si':'no'); set('cfgNivelServicio', s.nivelServicio||90);
+  document.getElementById('cfgHorizonteDias').disabled = (s.horizonteTipo!=='custom');
+  set('cfgPin',cfg.adminPin);
+  renderUserList(); renderMatriz();
+}
+function cfgHistChange(){
+  const usar=document.getElementById('cfgUsarHist').value==='si';
+  if(usar && histStats.size===0){ toast('Primero carga varios informes en "Historial de demanda".','err'); document.getElementById('cfgUsarHist').value='no'; return; }
+  cfg.std.usarHistorico=usar;
+  cfg.std.nivelServicio=Math.max(50,Math.min(99,parseInt(document.getElementById('cfgNivelServicio').value)||90));
+  saveCfg(); if(dataset) refreshAll();
+}
+function cfgHorizonteChange(){
+  const tipo=document.getElementById('cfgHorizonteTipo').value;
+  const di=document.getElementById('cfgHorizonteDias');
+  di.disabled = (tipo!=='custom');
+  if(tipo==='semanal') di.value=7; else if(tipo==='mensual') di.value=30;
+  cfg.std.horizonteTipo=tipo; cfg.std.horizonteDias=parseInt(di.value)||30;
+  saveCfg(); syncHorizonteUI(); if(dataset) refreshAll();
+}
+function renderUserList(){
+  const list=document.getElementById('userList');
+  if(!cfg.users.length){ list.innerHTML='<div class="alert-empty" style="border:1px dashed var(--line-2);border-radius:8px">Aún no hay usuarios. Agrega uno abajo.</div>'; return; }
+  list.innerHTML=cfg.users.map((u,i)=>{
+    const badge = u.tipo==='comprador' ? '<span class="tag t-sobre" style="pointer-events:none">Comprador</span>' : '<span class="tag t-ok" style="pointer-events:none">Centro pequeño</span>';
+    const asignLbl = u.tipo==='comprador' ? 'bodegas' : 'centros';
+    return `<div class="userrow">
+      <span class="un">${esc(u.nombre)}</span>
+      ${badge}
+      <span class="uc ${u.centros.length?'':'none'}">${u.centros.length? esc(u.centros.join(', ')) : (u.tipo==='comprador'?'todas las bodegas':'sin '+asignLbl+' asignados')}</span>
+      <button class="btn ghost sm" onclick="openUserCenters(${i})">Asignar ${asignLbl}</button>
+      <button class="btn ghost sm" onclick="delUser(${i})" style="color:var(--red)">Eliminar</button>
+    </div>`;
+  }).join('');
+}
+function renderMatriz(){
+  const list=document.getElementById('matrizList');
+  document.getElementById('matrizCount').textContent=(cfg.matrizBodegas||[]).length+' bodegas';
+  list.innerHTML=(cfg.matrizBodegas||[]).length? cfg.matrizBodegas.map((b,i)=>{
+    const enInf = dataset && dataset.centers.some(c=>String(c.code||'').trim()===String(b.code).trim());
+    return `<div class="userrow">
+      <span class="un mono">${esc(b.code)}</span>
+      <span class="uc">${esc(b.name)}</span>
+      ${enInf?'<span class="tag t-ok" style="pointer-events:none">en informe</span>':'<span class="tag t-inactivo" style="pointer-events:none">no en informe</span>'}
+      <button class="btn ghost sm" onclick="delBodega(${i})" style="color:var(--red)">Quitar</button>
+    </div>`;
+  }).join('') : '<div class="alert-empty" style="border:1px dashed var(--line-2);border-radius:8px">Matriz vacía. Agrega bodegas abajo.</div>';
+  // centros del informe aún no clasificados como bodega (candidatos)
+  const box=document.getElementById('bodegasSinClasificar');
+  if(dataset){
+    const codes=matrizCodes();
+    const nuevosCentros = diffCenters.nuevos||[];
+    const candidatos = dataset.centers.filter(c=> nuevosCentros.includes(c.name) && !(c.code&&codes.has(String(c.code).trim())));
+    if(candidatos.length){
+      box.innerHTML=`<p class="mini" style="margin-bottom:6px"><b>Centros nuevos sin clasificar</b> (detectados en el último informe). Márcalos como bodega si son de compradores:</p>`+
+        `<div class="chips" style="padding:0">`+candidatos.map(c=>`<button class="chip new" style="cursor:pointer;border:none" onclick="marcarBodega('${jsstr(c.code||'')}','${jsstr(c.name)}')">+ ${esc(c.name)}${c.code?' ('+esc(c.code)+')':''}</button>`).join('')+`</div>`;
+    } else box.innerHTML='';
+  } else box.innerHTML='';
+}
+function addBodega(){
+  const code=document.getElementById('newBodCode').value.trim();
+  const name=document.getElementById('newBodName').value.trim();
+  if(!code&&!name){toast('Indica al menos código o nombre.','err');return;}
+  if(cfg.matrizBodegas.some(b=>String(b.code).trim()===code && code)){toast('Ese código ya está en la matriz.','err');return;}
+  cfg.matrizBodegas.push({code, name:name||code}); saveCfg();
+  document.getElementById('newBodCode').value=''; document.getElementById('newBodName').value='';
+  renderMatriz(); if(dataset) refreshAll(); toast('Bodega agregada a la matriz.','ok');
+}
+function delBodega(i){ if(!confirm('¿Quitar '+cfg.matrizBodegas[i].name+' de la matriz? Volverá a contar como centro pequeño.'))return; cfg.matrizBodegas.splice(i,1); saveCfg(); renderMatriz(); if(dataset) refreshAll(); }
+function marcarBodega(code,name){ if(cfg.matrizBodegas.some(b=>String(b.code).trim()===code&&code)){toast('Ya está en la matriz.','err');return;} cfg.matrizBodegas.push({code,name:name||code}); saveCfg(); renderMatriz(); if(dataset) refreshAll(); toast(name+' marcada como bodega.','ok'); }
+function saveStandards(){
+  const g=id=>parseFloat(document.getElementById(id).value)||0;
+  cfg.std={ ...cfg.std, umbralBaja:g('cfgUmbralBaja'), umbralMedia:g('cfgUmbralMedia'),
+    factorBaja:g('cfgFactorBaja'), factorMedia:g('cfgFactorMedia'), factorAlta:g('cfgFactorAlta'),
+    rotMin:g('cfgRotMin'), sobrestock:g('cfgSobre')||1, redondeo:document.getElementById('cfgRedondeo').value };
+  saveCfg(); toast('Estándares guardados.','ok'); if(dataset) refreshAll();
+}
+function resetStandards(){ cfg.std=structuredClone(DEFAULT_CFG.std); saveCfg(); renderConfig(); if(dataset) refreshAll(); toast('Estándares restaurados.','ok'); }
+function savePin(){ const v=document.getElementById('cfgPin').value.trim(); if(v.length<3){toast('El PIN debe tener al menos 3 caracteres.','err');return;} cfg.adminPin=v; saveCfg(); toast('PIN actualizado.','ok'); }
+function addUser(){
+  const n=document.getElementById('newUserName').value.trim(); if(!n)return;
+  const tipo=document.getElementById('newUserTipo').value;
+  if(cfg.users.some(u=>u.nombre.toLowerCase()===n.toLowerCase())){toast('Ese usuario ya existe.','err');return;}
+  cfg.users.push({nombre:n,tipo,centros:[]}); saveCfg(); document.getElementById('newUserName').value=''; renderUserList();
+}
+function delUser(i){ if(!confirm('¿Eliminar usuario '+cfg.users[i].nombre+'?'))return; cfg.users.splice(i,1); saveCfg(); renderUserList(); }
+let editingUser=-1;
+function openUserCenters(i){
+  editingUser=i; const u=cfg.users[i];
+  const esComprador = u.tipo==='comprador';
+  document.getElementById('userModalTitle').textContent=(esComprador?'Bodegas para ':'Centros para ')+u.nombre;
+  let centers;
+  if(dataset){ centers = (esComprador? bodegasEnInforme() : centrosPequenos()).map(c=>c.name); }
+  else { centers = esComprador ? (cfg.matrizBodegas||[]).map(b=>b.name) : []; }
+  const assigned=new Set(u.centros);
+  if(!centers.length){ document.getElementById('userModalBody').innerHTML=`<div class="alert-empty">${esComprador?'No hay bodegas en el informe/matriz.':'Carga un informe primero para conocer los centros pequeños disponibles.'}</div>`; }
+  else{
+    document.getElementById('userModalBody').innerHTML=
+      `<p class="mini" style="margin-bottom:10px">${esComprador?'Selecciona las bodegas de este comprador. Si no seleccionas ninguna, verá <b>todas</b> las bodegas.':'Selecciona los centros pequeños de este usuario. Las bodegas no aparecen porque las gestionan los compradores.'}</p>
+       <div style="display:flex;gap:8px;margin-bottom:12px"><button class="btn ghost sm" onclick="allCenters(true)">Seleccionar todos</button><button class="btn ghost sm" onclick="allCenters(false)">Ninguno</button></div>
+       <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:6px" id="ccChecks">`+
+      centers.map(c=>`<label style="display:flex;align-items:center;gap:8px;padding:6px 9px;border:1px solid var(--line);border-radius:7px;cursor:pointer;font-size:12.5px"><input type="checkbox" value="${esc(c)}" ${assigned.has(c)?'checked':''}> ${esc(c)}</label>`).join('')+`</div>`;
+  }
+  openModal('userModal');
+}
+function allCenters(v){ document.querySelectorAll('#ccChecks input').forEach(cb=>cb.checked=v); }
+function saveUserCenters(){
+  if(editingUser<0)return;
+  const sel=[...document.querySelectorAll('#ccChecks input:checked')].map(cb=>cb.value);
+  cfg.users[editingUser].centros=sel; saveCfg(); renderUserList(); closeModal('userModal'); toast('Asignación guardada.','ok');
+}
+
+/* ============================================================
+   HISTORIAL
+============================================================ */
+function renderHist(){
+  const h=loadHist(); document.getElementById('histCount').textContent=h.length+' informes';
+  const body=document.getElementById('histBody');
+  if(!h.length){ body.innerHTML='<tr><td colspan="6" class="alert-empty">Aún no has cargado informes.</td></tr>'; return; }
+  body.innerHTML=[...h].reverse().map(s=>`<tr>
+    <td><b>${esc(s.period||s.periodKey)}</b></td>
+    <td class="mini">${new Date(s.uploadedAt).toLocaleString('es-CO')}</td>
+    <td class="num tnum">${fmt(s.nCentros)}</td>
+    <td class="num tnum">${fmt(s.nProd)}</td>
+    <td class="num tnum" ${s.nQuiebres?'style="color:var(--red);font-weight:600"':''}>${fmt(s.nQuiebres)}</td>
+    <td class="num tnum">${fmtMoney(s.valSug)}</td></tr>`).join('');
+}
+function clearAll(){
+  if(!confirm('Esto borra la configuración, el historial y el informe guardado en este navegador. ¿Continuar?'))return;
+  localStorage.removeItem(LS.cfg); localStorage.removeItem(LS.hist); localStorage.removeItem(LS.cur);
+  cfg=loadCfg(); dataset=null; prevSnapshot=null; location.reload();
+}
+
+/* ============================================================
+   EXPORTAR
+============================================================ */
+function exportSugeridos(){
+  if(!dataset||dataset.isConsolidated){toast('No hay desglose por centro para exportar.','err');return;}
+  const cidx=parseInt(document.getElementById('ccSelect').value);
+  const cname=cidx<0?'CONSOLIDADO':dataset.centers[cidx].name;
+  let rows=filasCentro(cidx).filter(r=>r.sugerido>0).sort((a,b)=>b.valor-a.valor);
+  if(!rows.length){toast('No hay ítems con sugerido para exportar.','err');return;}
+  const aoa=[['Centro','Codigo','Producto','Marca','Linea','RT','SD','Objetivo','Sugerido','CostoUnit','ValorSugerido','Estado']];
+  rows.forEach(r=>aoa.push([cname,r.p.meta.codigo,cleanName(r.p.meta.nombre),r.p.meta.marca,r.p.meta.linea,r.rt,r.sd,r.objetivo,r.sugerido,r.p.meta.costo,r.valor,r.estado]));
+  writeXlsx(aoa,`Sugeridos_${cname}_${dataset.periodKey||'informe'}`);
+}
+function exportTraslados(){
+  const rows=window._traslados||[];
+  if(!rows.length){toast('No hay traslados para exportar.','err');return;}
+  const aoa=[['Codigo','Producto','Marca','Origen','DisponibleOrigen','Destino','DemandaDestino','Trasladar']];
+  rows.forEach(r=>aoa.push([r.p.meta.codigo,cleanName(r.p.meta.nombre),r.p.meta.marca,dataset.centers[r.origen].name,r.disp,dataset.centers[r.destino].name,r.demanda,r.mover]));
+  writeXlsx(aoa,`Traslados_${dataset.periodKey||'informe'}`);
+}
+
+/* ORDEN DE COMPRA CONSOLIDADA POR MARCA (suma de los centros visibles) */
+function exportOCporMarca(){
+  if(!dataset||dataset.isConsolidated){toast('No hay desglose por centro para exportar.','err');return;}
+  const vis=visibleCenters(); if(!vis.length){toast('No hay centros visibles.','err');return;}
+  const idxs=vis.map(c=>c.idx);
+  const map=new Map(); // codigo -> {meta, sug, valor}
+  for(const p of dataset.products){
+    let sug=0, val=0;
+    for(const i of idxs){ const rt=p.cells[i][0], sd=p.cells[i][1]; if(rt===0&&sd===0)continue; const ev=evaluarPC(p,i,rt,sd); sug+=ev.sugerido; val+=ev.valor; }
+    if(sug>0) map.set(p.meta.codigo,{meta:p.meta,sug,val});
+  }
+  if(!map.size){toast('No hay sugeridos para consolidar.','err');return;}
+  const rows=[...map.values()].sort((a,b)=> (a.meta.marca||'').localeCompare(b.meta.marca||'') || b.val-a.val);
+  const aoa=[['Marca','Codigo','Descripcion','Referencia','ABC','Cantidad a comprar','Costo unit','Valor total']];
+  let marcaActual=null, subTot=0, subVal=0;
+  const pushSub=()=>{ if(marcaActual!==null) aoa.push(['', '', 'SUBTOTAL '+marcaActual, '', '', subTot, '', subVal]); };
+  rows.forEach(r=>{
+    if(r.meta.marca!==marcaActual){ pushSub(); marcaActual=r.meta.marca; subTot=0; subVal=0; }
+    aoa.push([r.meta.marca, String(r.meta.codigo), cleanName(r.meta.nombre), r.meta.refe||'', abcDe(r.meta.codigo), r.sug, r.meta.costo, r.val]);
+    subTot+=r.sug; subVal+=r.val;
+  });
+  pushSub();
+  const alcance = role==='comprador'?'mis_bodegas':(role==='cc'?'mis_centros':'todos');
+  writeXlsx(aoa, `OC_por_marca_${alcance}_${dataset.periodKey||'informe'}`);
+}
+
+/* Semana ISO de una fecha (para "número de semana a sugerir") */
+function isoWeek(d){ const t=new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())); const day=t.getUTCDay()||7; t.setUTCDate(t.getUTCDate()+4-day); const y=new Date(Date.UTC(t.getUTCFullYear(),0,1)); return Math.ceil((((t-y)/864e5)+1)/7); }
+
+/* PLANTILLA SEMANAL para el usuario del centro:
+   Zona 1 = sugerido de la semana · Zona 2 = sustitutos similares · Zona 3 = productos ingresados */
+function exportSemanal(){
+  if(!dataset||dataset.isConsolidated){toast('No hay desglose por centro para exportar.','err');return;}
+  const cidx=parseInt(document.getElementById('ccSelect').value);
+  if(cidx<0){toast('Elige un centro de costo específico (no el consolidado) para la plantilla semanal.','err');return;}
+  const centro=dataset.centers[cidx];
+  const semana=isoWeek(new Date());
+
+  // ---- Zona 1: sugerido de la semana
+  let sug=filasCentro(cidx).filter(r=>r.sugerido>0).sort((a,b)=> (a.p.meta.linea||'').localeCompare(b.p.meta.linea||'') || b.valor-a.valor);
+
+  const aoa=[];
+  aoa.push([`SUGERIDO SEMANAL · ${centro.name}${centro.code?' ('+centro.code+')':''}`]);
+  aoa.push([`Informe: ${dataset.period}  ·  Horizonte: ${horizonteLabel()}  ·  Generado: ${new Date().toLocaleString('es-CO')}`]);
+  aoa.push([]);
+  aoa.push(['Codigo','Descripcion','Referencia','Rotacion (RT)','Saldo (SD)','Cantidad sugerida','Cantidad a pedir','Semana a sugerir','Observaciones']);
+  if(sug.length){
+    sug.forEach(r=>aoa.push([ String(r.p.meta.codigo), cleanName(r.p.meta.nombre), r.p.meta.refe||'', r.rt, r.sd, r.sugerido, r.sugerido, semana, '' ]));
+  } else {
+    aoa.push(['— Sin sugeridos para este centro en el horizonte seleccionado —']);
+  }
+
+  // ---- Zona 2: sustitutos similares (para quiebres del centro)
+  aoa.push([]); aoa.push([]);
+  aoa.push(['PRODUCTOS SUSTITUTOS SIMILARES (alternativa por descripción, menor costo con stock)']);
+  aoa.push(['Producto en quiebre','Codigo','Referencia','Sustituto sugerido','Codigo sustituto','Referencia sustituto','Stock disponible','Costo sustituto','Similitud %']);
+  let quiebres=dataset.products.map(p=>({p,rt:p.cells[cidx][0],sd:p.cells[cidx][1]})).filter(x=>x.rt>0&&x.sd<=0);
+  let subCount=0;
+  quiebres.sort((a,b)=>b.rt-a.rt);
+  quiebres.forEach(q=>{
+    const alts=alternativasPara(q.p, cidx);
+    if(!alts.length) return; subCount++;
+    const a=alts[0];
+    aoa.push([ cleanName(q.p.meta.nombre), String(q.p.meta.codigo), q.p.meta.refe||'', cleanName(a.p.meta.nombre), String(a.p.meta.codigo), a.p.meta.refe||'', a.sdCentro||a.sdTotal, a.p.meta.costo, Math.round(a.sim*100) ]);
+  });
+  if(!subCount) aoa.push(['— Sin quiebres con sustituto disponible —']);
+
+  // ---- Zona 3: productos ingresados (nuevos vs informe anterior) con presencia en el centro
+  aoa.push([]); aoa.push([]);
+  aoa.push(['PRODUCTOS INGRESADOS (nuevos frente al informe anterior)']);
+  aoa.push(['Codigo','Descripcion','Referencia','Marca','Linea','Costo','RT en el centro','SD en el centro']);
+  let ing=0;
+  if(newProducts.length){
+    newProducts.forEach(m=>{
+      const p=dataset.products.find(x=>String(x.meta.codigo)===String(m.codigo)); if(!p)return;
+      const rt=p.cells[cidx][0], sd=p.cells[cidx][1];
+      aoa.push([ String(m.codigo), cleanName(m.nombre), m.refe||'', m.marca, m.linea, m.costo, rt, sd ]); ing++;
+    });
+  }
+  if(!ing) aoa.push([ prevSnapshot? '— Sin productos nuevos frente al informe anterior —' : '— Se detectarán al cargar el próximo informe —' ]);
+
+  // construir hoja
+  const ws=XLSX.utils.aoa_to_sheet(aoa);
+  ws['!cols']=[{wch:16},{wch:44},{wch:20},{wch:14},{wch:12},{wch:16},{wch:15},{wch:15},{wch:22}];
+  ws['!merges']=[
+    {s:{r:0,c:0},e:{r:0,c:8}},
+    {s:{r:1,c:0},e:{r:1,c:8}}
+  ];
+  const wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,ws, ('Sug '+centro.name).slice(0,31));
+  const fname=`Sugerido_Semana${semana}_${centro.name.replace(/[^A-Za-z0-9]/g,'')}_${dataset.periodKey||''}.xlsx`;
+  XLSX.writeFile(wb, fname);
+  toast(`Plantilla semanal de ${centro.name} exportada (semana ${semana}).`,'ok');
+}
+
+function writeXlsx(aoa,name){
+  const ws=XLSX.utils.aoa_to_sheet(aoa); const wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,ws,'Datos'); XLSX.writeFile(wb, name+'.xlsx');
+  toast('Archivo exportado.','ok');
+}
+
+/* ============================================================
+   UTILIDADES
+============================================================ */
+function fmt(n){ return (n==null||!isFinite(n))?'0':Math.round(n).toLocaleString('es-CO'); }
+function fmtMoney(n){ if(!n)return '$0'; return '$'+Math.round(n).toLocaleString('es-CO'); }
+function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+function jsstr(s){ return String(s).replace(/'/g,"\\'"); }
+function cleanName(s){ return String(s||'').replace(/\s*::.*$/,'').replace(/┤/g,'"').trim(); }
+function kpi(color,lab,val,sub){ return `<div class="kpi k-${color}"><div class="lab"><span class="dot"></span>${lab}</div><div class="val tnum">${val}</div><div class="sub">${sub}</div></div>`; }
+function estadoTag(e){
+  const map={QUIEBRE:['t-quiebre','Quiebre'],BAJO:['t-bajo','Bajo'],OK:['t-ok','OK'],SOBRESTOCK:['t-sobre','Sobrestock'],INACTIVO:['t-inactivo','Inactivo'],SINMOV:['t-inactivo','—']};
+  const [c,t]=map[e]||['t-inactivo',e]; return `<span class="tag ${c}">${t}</span>`;
+}
+function toast(msg,type){ const t=document.getElementById('toast'); t.className='toast on '+(type||''); t.innerHTML=msg; clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('on'),type==='err'?4200:2600); }
+function openModal(id){ document.getElementById(id).classList.add('on'); }
+function closeModal(id){ document.getElementById(id).classList.remove('on'); }
+document.querySelectorAll('.modal-bg').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('on');}));
+document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.modal-bg.on').forEach(m=>m.classList.remove('on'));});
+
+function showApp(){
+  document.getElementById('emptyState').classList.add('hidden');
+  document.getElementById('app').classList.remove('hidden');
+  document.getElementById('periodBadge').innerHTML = dataset? `Periodo <b>${esc(dataset.period)}</b>` : 'Sin informe';
+}
+function refreshAll(){
+  applyRoleUI();
+  document.getElementById('periodBadge').innerHTML = dataset? `Periodo <b>${esc(dataset.period)}</b>` : 'Sin informe';
+  // recalcular contador de alertas de fondo
+  if(dataset && !dataset.isConsolidated){
+    const vis=visibleCenters(); const scope=role==='admin'?dataset.centers.map((c,i)=>i):vis.map(c=>c.idx);
+    let q=0,neg=0;
+    for(const ci of scope) for(const p of dataset.products){const rt=p.cells[ci][0],sd=p.cells[ci][1]; if(rt>0&&sd<=0)q++; if(sd<0)neg++;}
+    updateAlertCounts(q,newProducts.length,neg);
+  }
+  go(currentView);
+}
+
+/* ============================================================
+   INICIO
+============================================================ */
+(function init(){
+  document.getElementById('footerNote').innerHTML =
+    '<b>Versión Avanzada</b> · matriz de bodegas + roles + historial/stock de seguridad + ABC + OC por marca.<br>Procesamiento 100% local · compara RT (rotación) vs SD (saldo) del ERP Manager · JL &amp; RB SAS — Electromillonaria.';
+  syncHorizonteUI();
+  const cur=loadCurrent();
+  if(cur){
+    // reconstruir dataset desde storage
+    prevSnapshot = loadHist().slice(-2)[0] || null; // penúltimo como referencia
+    dataset=cur; computeDiffs(cur); showApp(); applyRoleUI(); go('sugeridos');
+  } else {
+    applyRoleUI();
+    document.getElementById('app').classList.add('hidden');
+  }
+})();
+</script>
+</body>
+</html>
